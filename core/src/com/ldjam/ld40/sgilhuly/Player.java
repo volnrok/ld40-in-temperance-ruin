@@ -16,9 +16,9 @@ public class Player extends Creature {
 		super(10, 10, 10, 10, 10);
 		
 		posLevel = 1;
-		posX = 2;
-		posY = 2;
-		posDir = Map.NORTH;
+		posX = 1;
+		posY = 1;
+		posDir = Map.EAST;
 		
 		hp = 50;
 		hpMax = 100;

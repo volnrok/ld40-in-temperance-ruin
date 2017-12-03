@@ -1,8 +1,8 @@
 package com.ldjam.ld40.sgilhuly;
 
 public class Map {
-	public static final int MAP_WIDTH = 8;
-	public static final int MAP_HEIGHT = 8;
+	public static final int MAP_WIDTH = 12;
+	public static final int MAP_HEIGHT = 12;
 	
 	public static final byte OPEN = 0;
 	public static final byte WALL = 1;
@@ -82,14 +82,18 @@ public class Map {
 	}
 	
 	public static final Map MAP_1 = new Map(new String[] {
-			"########",
-			"#      #",
-			"## ### #",
-			"##   # #",
-			"# #  # #",
-			"# # #  #",
-			"#      #",
-			"########"
+			"############",
+			"#v    #^   #",
+			"#####  # # #",
+			"### ##   # #",
+			"### ### ## #",
+			"##^        #",
+			"####   ###v#",
+			"#    #^  ###",
+			"#v#  ###   #",
+			"###^  v### #",
+			"#####      #",
+			"############"
 	});
 	
 	public static Map getMap(int i) {
