@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Queue;
 public class Metronome {
 
 	private static final float WRITE_DELAY = 0.02f;
-	private static final float WAIT_DELAY = 1f;
+	private static final float WAIT_DELAY = 0.75f;
 	private static final float COOLDOWN_DELAY = 0.25f;
 	
 	public static 
@@ -103,6 +103,18 @@ public class Metronome {
 	
 	public void queueEvent(String text, int palette) {
 		queueEvent(text, palette, null);
+	}
+	
+	public void interruptEvent(String text, int palette, Runnable event) {
+		events.addFirst(new TextEvent(text, palette, event));
+	}
+	
+	public void interruptEvent(String text, int palette) {
+		interruptEvent(text, palette, null);
+	}
+	
+	public void clearEvents() {
+		events.clear();
 	}
 	
 	private void nextState() {

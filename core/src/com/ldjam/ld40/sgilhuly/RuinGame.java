@@ -1,7 +1,5 @@
 package com.ldjam.ld40.sgilhuly;
 
-import java.util.Random;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -32,6 +30,9 @@ public class RuinGame extends ApplicationAdapter {
 	MapDrawer drawer;
 	Player player;
 	Texture ui;
+	Texture portrait;
+	Texture healthBar;
+	TextureRegion healthBarFill;
 	float camShake = 0;
 	
 	@Override
@@ -56,6 +57,9 @@ public class RuinGame extends ApplicationAdapter {
 		map = Map.MAP_1;
 		drawer = new MapDrawer(0);
 		ui = new Texture("ui.png");
+		portrait = new Texture("portrait.png");
+		healthBar = new Texture("healthBar.png");
+		healthBarFill = new TextureRegion(healthBar);
 		player = new Player();
 	}
 
@@ -78,12 +82,13 @@ public class RuinGame extends ApplicationAdapter {
 			player.step(-1);
 		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-			GameContext.metronome.queueEvent("You run into a wall.", (int) (Math.random() * 7), new Runnable() {
+			/*GameContext.metronome.queueEvent("The dungeon is quiet.", (int) (Math.random() * 7), new Runnable() {
 				@Override
 				public void run() {
 					shakeScreen();
 				}
-			});
+			});*/
+			player.getWounded();
 		}
 		
 		camShake *= 0.9f;
@@ -93,9 +98,8 @@ public class RuinGame extends ApplicationAdapter {
 		batch.begin();
 		drawer.drawMap(player.posX, player.posY, player.posDir, map, batch, camShake);
 		
-		// Draw UI
-		batch.draw(ui, 0, 0);
-		font[GameContext.metronome.displayPalette].draw(batch, GameContext.metronome.displayText, 1, 70);
+		drawUI();
+		
 		batch.end();
 	}
 	
@@ -113,5 +117,33 @@ public class RuinGame extends ApplicationAdapter {
 	
 	public void shakeScreen() {
 		camShake = 4.4f;
+	}
+	
+	public void drawUI() {
+		// TODO Deal with hardcoded ui element locations? nah
+		batch.draw(ui, 0, 0);
+		batch.draw(portrait, 122, 63);
+		healthBarFill.setRegionHeight((int) (healthBar.getHeight() * player.hp * 1.0f / player.hpMax));
+		batch.draw(healthBarFill, 143, 47);
+		// Metronome
+		font[GameContext.metronome.displayPalette].draw(batch, GameContext.metronome.displayText, 1, 83 + Constants.TEXT_OFFSET);
+		// Name
+		font[Palette.GREEN].draw(batch, player.name, 122, 82 + Constants.TEXT_OFFSET);
+		// Gold
+		font[Palette.YELLOW].draw(batch, String.format("%2d", player.gold), 131, 55 + Constants.TEXT_OFFSET);
+		// Compass
+		font[Palette.GREEN].draw(batch, Map.DIR_LETTERS[player.posDir], 129, 47 + Constants.TEXT_OFFSET);
+		// Stats
+		font[Palette.GREEN].draw(batch, "str", 122, 34 + Constants.TEXT_OFFSET);
+		font[Palette.GREEN].draw(batch, "per", 122, 26 + Constants.TEXT_OFFSET);
+		font[Palette.GREEN].draw(batch, "spd", 122, 18 + Constants.TEXT_OFFSET);
+		font[Palette.GREEN].draw(batch, "agi", 122, 10 + Constants.TEXT_OFFSET);
+		font[Palette.GREEN].draw(batch, "foc", 122, 2 + Constants.TEXT_OFFSET);
+
+		font[player.strCalc < player.str ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.strCalc), 144, 34 + Constants.TEXT_OFFSET);
+		font[player.perCalc < player.per ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.perCalc), 144, 26 + Constants.TEXT_OFFSET);
+		font[player.spdCalc < player.spd ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.spdCalc), 144, 18 + Constants.TEXT_OFFSET);
+		font[player.agiCalc < player.agi ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.agiCalc), 144, 10 + Constants.TEXT_OFFSET);
+		font[player.focCalc < player.foc ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.focCalc), 144, 2 + Constants.TEXT_OFFSET);
 	}
 }

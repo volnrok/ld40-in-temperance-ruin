@@ -16,6 +16,10 @@ public class Map {
 	public static final int SOUTH = 2;
 	public static final int WEST = 3;
 	
+	public static final String[] DIR_LETTERS = {
+		"n", "e", "s", "w"
+	};
+	
 	private static final Basis[] BASES = new Basis[] {
 			new Basis(NORTH),
 			new Basis(EAST),
