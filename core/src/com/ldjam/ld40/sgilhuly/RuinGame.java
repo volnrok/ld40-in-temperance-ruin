@@ -1,5 +1,7 @@
 package com.ldjam.ld40.sgilhuly;
 
+import java.util.Random;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -30,9 +32,12 @@ public class RuinGame extends ApplicationAdapter {
 	MapDrawer drawer;
 	Player player;
 	Texture ui;
+	float camShake = 0;
 	
 	@Override
 	public void create () {
+		GameContext.game = this;
+		
 		fontTexture = new Texture("font-coloured.png");
 		font = new BitmapFont[7];
 		for(int i = 0; i < 7; i++) {
@@ -72,12 +77,25 @@ public class RuinGame extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
 			player.step(-1);
 		}
+		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+			GameContext.metronome.queueEvent("You run into a wall.", (int) (Math.random() * 7), new Runnable() {
+				@Override
+				public void run() {
+					shakeScreen();
+				}
+			});
+		}
+		
+		camShake *= 0.9f;
+		GameContext.metronome.update(Gdx.graphics.getDeltaTime());
 		
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		drawer.drawMap(player.posX, player.posY, player.posDir, map, batch, 0);
+		drawer.drawMap(player.posX, player.posY, player.posDir, map, batch, camShake);
+		
+		// Draw UI
 		batch.draw(ui, 0, 0);
-		font[Palette.BLUE].draw(batch, "Test test 123", 1, 70);
+		font[GameContext.metronome.displayPalette].draw(batch, GameContext.metronome.displayText, 1, 70);
 		batch.end();
 	}
 	
@@ -91,5 +109,9 @@ public class RuinGame extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height);
+	}
+	
+	public void shakeScreen() {
+		camShake = 4.4f;
 	}
 }

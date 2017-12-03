@@ -11,11 +11,12 @@ public class Player extends Creature {
 		posX = 2;
 		posY = 2;
 		posDir = Map.NORTH;
+		
+		GameContext.currentMap = Map.MAP_1;
 	}
 	
 	public void step(int amount) {
-		Map m = Map.getMap(posLevel);
-		byte space = m.accessMap(posX, posY, posDir, amount, 0);
+		byte space = GameContext.currentMap.accessMap(posX, posY, posDir, amount, 0);
 		if(Map.isPassable(space)) {
 			Basis b = Map.dirToBasis(posDir);
 			posX += b.forwardX * amount;
