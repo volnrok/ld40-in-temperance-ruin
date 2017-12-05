@@ -1,8 +1,8 @@
 package com.ldjam.ld40.sgilhuly;
 
 public class Map {
-	public static final int MAP_WIDTH = 12;
-	public static final int MAP_HEIGHT = 12;
+	public static final int MAP_WIDTH = 24;
+	public static final int MAP_HEIGHT = 24;
 	
 	public static final byte OPEN = 0;
 	public static final byte WALL = 1;
@@ -10,6 +10,7 @@ public class Map {
 	public static final byte TREASURE_USED = 3;
 	public static final byte STAIRS_UP = 4;
 	public static final byte STAIRS_DOWN = 5;
+	public static final byte HOARD = 6;
 	
 	public static final int NORTH = 0;
 	public static final int EAST = 1;
@@ -20,7 +21,7 @@ public class Map {
 		"n", "e", "s", "w"
 	};
 	
-	private static final Basis[] BASES = new Basis[] {
+	private static final Basis[] BASES = {
 			new Basis(NORTH),
 			new Basis(EAST),
 			new Basis(SOUTH),
@@ -28,8 +29,11 @@ public class Map {
 	};
 	
 	private byte[][] mapData;
+	public int palette;
 	
-	public Map(String[] data) {
+	public Map(int palette, String[] data) {
+		
+		this.palette = palette;
 		
 		mapData = new byte[MAP_HEIGHT][MAP_WIDTH];
 		
@@ -50,6 +54,13 @@ public class Map {
 		return mapData[posY][posX];
 	}
 	
+	public void setMap(int posX, int posY, byte val) {
+		posX = Helper.iclamp(posX, 0, MAP_WIDTH - 1);
+		posY = Helper.iclamp(posY, 0, MAP_HEIGHT - 1);
+		
+		mapData[posY][posX] = val;
+	}
+	
 	public static Basis dirToBasis(int dir) {
 		return BASES[Helper.mod(dir, 4)];
 	}
@@ -58,12 +69,16 @@ public class Map {
 		switch(c) {
 		case '#':
 			return WALL;
-		case 'T':
+		case 't':
 			return TREASURE;
+		case 'p':
+			return TREASURE_USED;
 		case '^':
 			return STAIRS_UP;
 		case 'v':
 			return STAIRS_DOWN;
+		case 'H':
+			return HOARD;
 		case ' ':
 		default:
 			return OPEN;
@@ -75,35 +90,157 @@ public class Map {
 		case WALL:
 		case TREASURE:
 		case TREASURE_USED:
+		case HOARD:
 			return false;
 		default:
 			return true;
 		}
 	}
 	
-	public static final Map MAP_1 = new Map(new String[] {
-			"############",
-			"#v    #^   #",
-			"#####  # # #",
-			"### ##   # #",
-			"### ### ## #",
-			"##^        #",
-			"####   ###v#",
-			"#    #^  ###",
-			"#v#  ###   #",
-			"###^  v### #",
-			"#####      #",
-			"############"
-	});
+	public static final int START_X = 17;
+	public static final int START_Y = 10;
+	public static final int START_DIR = WEST;
 	
-	public static Map getMap(int i) {
-		switch(i) {
-		case 1:
-			return MAP_1;
-		default:
-			return null;
-		}
-	}
+	public static final Map MAP_1 = new Map(Palette.GREY, new String[] { // 14 treasures
+			"########################",
+			"# t# t ##              #",
+			"#      ## ##### # #### #",
+			"#  # #  # ##### #    #t#",
+			"#       #   t## #### ###",
+			"#  #      ####         #",
+			"#### ########## #####  #",
+			"#               #      #",
+			"# ## ###### ### # t    #",
+			"# ##      # ### ########",
+			"# ######         ^# t  #",
+			"#   #      #### ###    #",
+			"#  t#  #   # t# ####  ##",
+			"#####t #               #",
+			"#  t#  #  ###   ### ####",
+			"#   ####  #      ## #t #",
+			"# ###     #   #   # #  #",
+			"#         #  ###  # ## #",
+			"#  ### ###   t#        #",
+			"# #       #       # v  #",
+			"# # #   # #       # ## #",
+			"# #   v   ######### #  #",
+			"#t# #   # ######t   #  #",
+			"########################"
+	});
+	public static final Map MAP_2 = new Map(Palette.GREEN, new String[] { // 14 treasures (28)
+			"########################",
+			"##   t########      ####",
+			"## ####        #### ####",
+			"#       ##########     #",
+			"# ## ## ##      ## # t #",
+			"#  # #      ###    #####",
+			"#      v#####    #    ##",
+			"#### ###    # #  #### ##",
+			"#### #   #t   #     # ##",
+			"#t     ########  ## # ##",
+			"## ###           #  # ##",
+			"## #   ###### ## #v #  #",
+			"#  #t# #v     ##t#  # t#",
+			"# #### #t #  ###### #  #",
+			"#   t# ##     ##    ####",
+			"###  #   #### ## ##### #",
+			"### ## #   t# ##     # #",
+			"### ## #   ##  #####   #",
+			"##     ###           # #",
+			"#  ##  #### ####### ^#t#",
+			"# t##   ###tt###     ###",
+			"##### ^ #### ###  ######",
+			"############      ######",
+			"########################"
+	});
+	public static final Map MAP_3 = new Map(Palette.BLUE, new String[] { // 12 treasures (40)
+			"########################",
+			"###    t###v   ##   ####",
+			"### ########## ## t ####",
+			"#                      #",
+			"### ########## #### ####",
+			"#                      #",
+			"### ## ^ ## ########## #",
+			"### ## #### ## t### t# #",
+			"##      t##     ###    #",
+			"########### ######### ##",
+			"#                   #  #",
+			"### ##### ####### ^ ## #",
+			"# # # ##^ #  v  ###### #",
+			"#   # ##  #     #      #",
+			"# #   ### # t#t ## ### #",
+			"#t# # ### #     ##   ###",
+			"### # v## #     ## #   #",
+			"#t# #     ### #### ### #",
+			"# # ##### ###      ##  #",
+			"#         #### ## ### ##",
+			"### ########## ##t#    #",
+			"##               #  # t#",
+			"###  t #########   #####",
+			"########################"
+	});
+	public static final Map MAP_4 = new Map(Palette.RED, new String[] { // 12 treasures (52)
+			"########################",
+			"# t####### ^######## t #",
+			"# #   ###     ###  #   #",
+			"# # ####  ### ##    # ##",
+			"# #  ##    ##         ##",
+			"#          ######  #####",
+			"##    ##  ##    # ##  ##",
+			"#t# v#######t #    #t  #",
+			"#  ##      ###t### #   #",
+			"#     ##        ## ### #",
+			"#  #####    ######  ## #",
+			"#t##v ###              #",
+			"###    ## ## ^###    ###",
+			"#      ## ########  ####",
+			"# ##      ######   ##t #",
+			"# ##########  ## # ##  #",
+			"#  ## ^####      #  ## #",
+			"#t ##          ####  # #",
+			"############  ####     #",
+			"##  ## ##### ##t #    ##",
+			"# t  # #     ##  ##  ###",
+			"#    # # ####t #    ####",
+			"##             #########",
+			"########################"
+	});
+	public static final Map MAP_5 = new Map(Palette.YELLOW, new String[] { // hoards
+			"########################",
+			"########################",
+			"################HHHHHHH#",
+			"################HHHHHHH#",
+			"################HHHHHHH#",
+			"################HHH HHH#",
+			"#################H# #H##",
+			"####^      #HHHHH## ####",
+			"#### p p p ##p#p### ####",
+			"####                ####",
+			"#### p p p ##p#p########",
+			"####^      #HHHHH#######",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################"
+	});
+	// GREY, GREEN, BLUE, PURPLE, RED, YELLOW
+	
+	public static final Map[] MAPS = {
+			null,
+			MAP_1,
+			MAP_2,
+			MAP_3,
+			MAP_4,
+			MAP_5
+	};
 }
 
 class Basis {

@@ -15,26 +15,40 @@ public class MapDrawer {
 	
 	private Texture[] stairsUp;
 	private Texture[] stairsDown;
+	private Texture[] pedestal;
+	private Texture[] emptyPedestal;
+	private Texture[] hoard;
 	
 	public MapDrawer(int palette) {
-		background = new Texture("walls/background.png");
-		sideLeft = new Texture("walls/side_left.png");
-		sideLeftFar = new Texture("walls/side_left_far.png");
-		sideRight = new Texture("walls/side_right.png");
-		sideRightFar = new Texture("walls/side_right_far.png");
-		wall = new Texture("walls/wall.png");
-		wallFar = new Texture("walls/wall_far.png");
+		
+		background = Palette.loadSwapped("texture/walls/background.png", Palette.GREY, palette);
+		sideLeft = Palette.loadSwapped("texture/walls/side_left.png", Palette.GREY, palette);
+		sideLeftFar = Palette.loadSwapped("texture/walls/side_left_far.png", Palette.GREY, palette);
+		sideRight = Palette.loadSwapped("texture/walls/side_right.png", Palette.GREY, palette);
+		sideRightFar = Palette.loadSwapped("texture/walls/side_right_far.png", Palette.GREY, palette);
+		wall = Palette.loadSwapped("texture/walls/wall.png", Palette.GREY, palette);
+		wallFar = Palette.loadSwapped("texture/walls/wall_far.png", Palette.GREY, palette);
 
 		stairsUp = new Texture[] {
-				new Texture("deco/stairsUp.png"),
-				new Texture("deco/stairsUpFar.png")
+				Palette.loadSwapped("texture/deco/stairsUp.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/stairsUpFar.png", Palette.GREY, palette)
 		};
 		stairsDown = new Texture[] {
-				new Texture("deco/stairsDown.png"),
-				new Texture("deco/stairsDownFar.png")
+				Palette.loadSwapped("texture/deco/stairsDown.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/stairsDownFar.png", Palette.GREY, palette)
 		};
-		
-		//TODO palette swaps
+		pedestal = new Texture[] {
+				Palette.loadSwapped("texture/deco/pedestal.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/pedestalFar.png", Palette.GREY, palette)
+		};
+		emptyPedestal = new Texture[] {
+				Palette.loadSwapped("texture/deco/emptyPedestal.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/emptyPedestalFar.png", Palette.GREY, palette)
+		};
+		hoard = new Texture[] {
+				Palette.loadSwapped("texture/deco/hoard.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/hoardFar.png", Palette.GREY, palette)
+		};
 	}
 
 	public void drawMap(int posX, int posY, int posDir, Map map, SpriteBatch batch, float cameraShake) {
@@ -107,6 +121,12 @@ public class MapDrawer {
 			return stairsUp;
 		case Map.STAIRS_DOWN:
 			return stairsDown;
+		case Map.TREASURE:
+			return pedestal;
+		case Map.TREASURE_USED:
+			return emptyPedestal;
+		case Map.HOARD:
+			return hoard;
 		default:
 			return null;
 		}

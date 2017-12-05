@@ -50,16 +50,46 @@ public class Palette {
 	public static final int BLUE = 5;
 	public static final int PURPLE = 6;
 	
-	public static Texture paletteSwap(Texture tex, int[][] swaps) {
+	public static final int[][] PALETTE = {
+		{GREY_1, GREY_2, GREY_3, GREY_4},
+		{RED_1, RED_2, RED_3, RED_4},
+		{ORANGE_1, ORANGE_2, ORANGE_3, ORANGE_4},
+		{YELLOW_1, YELLOW_2, YELLOW_3, YELLOW_4},
+		{GREEN_1, GREEN_2, GREEN_3, GREEN_4},
+		{BLUE_1, BLUE_2, BLUE_3, BLUE_4},
+		{PURPLE_1, PURPLE_2, PURPLE_3, PURPLE_4},
+	};
+	
+	public static Texture loadSwapped(String file, int from, int to) {
+		Texture tex = new Texture(file);
+		Texture tex2 = paletteSwap(tex, from, to);
+		if(from != to) {
+			tex.dispose();
+		}
+		return tex2;
+	}
+	
+	public static Texture paletteSwap(Texture tex, int from, int to) {
+		
+		if(from == to) {
+			return tex;
+		}
 		
 		if(!tex.getTextureData().isPrepared()) {
 			tex.getTextureData().prepare();
 		}
 		
 		Pixmap pixmap = tex.getTextureData().consumePixmap();
-		//TODO swaps
-		tex.draw(pixmap, 0, 0);
-		
-		return null;
+		for(int y = 0; y < pixmap.getHeight(); y++) {
+			for(int x = 0; x < pixmap.getWidth(); x++) {
+				for(int i = 0; i < 4; i++) {
+					if(pixmap.getPixel(x, y) == PALETTE[from][i]) {
+						pixmap.drawPixel(x, y, PALETTE[to][i]);
+						i = 4;
+					}
+				}
+			}
+		}
+		return new Texture(pixmap);
 	}
 }

@@ -4,11 +4,11 @@ import com.badlogic.gdx.utils.Queue;
 
 public class Metronome {
 
-	private static final float WRITE_DELAY = 0.02f;
+	private static final float WRITE_DELAY = 0.015f;
 	private static final float WAIT_DELAY = 0.75f;
-	private static final float COOLDOWN_DELAY = 0.25f;
+	private static final float COOLDOWN_DELAY = 0.15f;
 	
-	public static 
+	//public static // What was I going to write here ???
 	
 	enum State {
 		NONE, WRITE, WAIT, CLEAR, COOLDOWN
@@ -38,6 +38,10 @@ public class Metronome {
 	
 	public Metronome() {
 		events = new Queue<TextEvent>();
+	}
+	
+	public boolean isEmpty() {
+		return state == State.NONE && events.size == 0;
 	}
 	
 	public void update(float delta) {
