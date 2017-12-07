@@ -72,9 +72,9 @@ public class Combat {
 		batch.draw(GameContext.game.combatUI, 0, 0);
 		batch.draw(player.weapon.icon, 10, 24);
 		batch.draw(player.wand.icon, 10, 13);
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, String.format("%s %d/%d", player.wand.name, player.spells, player.spellsMax), 21, 14 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, "Flee", 21, 3 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "1. " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "2. " + player.wand.name + " " + player.spells + "/" + player.spellsMax, 21, 14 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3. Flee", 21, 3 + Constants.TEXT_OFFSET);
 		
 		GameContext.game.combatHealthBarFill.setRegionY(32 - (int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
 		GameContext.game.combatHealthBarFill.setRegionHeight((int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
@@ -100,13 +100,13 @@ public class Combat {
 	
 	public void swing(Creature a, final Creature b) {
 		int numSwings = a.numSwings(b);
-		metronome.queueEvent(String.format("%s %d time%s!",  a.swingText(), numSwings, numSwings == 1 ? "" : "s"), Palette.GREY);
+		metronome.queueEvent(a.swingText() + (numSwings == 1 ? "!" : " " + numSwings + " times!"), Palette.GREY);
 		
 		for(int i = 0; i < numSwings; i++) {
 			if(a.didHit(b)) {
 				float damage = a.swingDamage();
 				final int totalDamage = (int) b.resistDamage(damage, PHYS);
-				metronome.queueEvent(String.format("Hit for %d! <%d>", totalDamage, (int) damage), Palette.GREY, new Runnable() {
+				metronome.queueEvent("Hit for " + totalDamage + " <" + (int) damage + ">", Palette.GREY, new Runnable() {
 					@Override
 					public void run() {
 						b.takeDamage(totalDamage);
@@ -122,7 +122,7 @@ public class Combat {
 		metronome.queueEvent(a.spellText(), Palette.GREY);
 		float damage = a.spellDamage();
 		final int totalDamage = (int) b.resistDamage(damage, a.spellElement());
-		metronome.queueEvent(String.format("%d %s! <%d>", totalDamage, ELEMENT_NAMES[a.spellElement()], (int) damage), ELEMENT_PALETTES[a.spellElement()], new Runnable() {
+		metronome.queueEvent(totalDamage + " " + ELEMENT_NAMES[a.spellElement()] + "! <" + (int) damage + ">", ELEMENT_PALETTES[a.spellElement()], new Runnable() {
 			@Override
 			public void run() {
 				b.takeDamage(totalDamage);
@@ -133,6 +133,11 @@ public class Combat {
 	public void endCombat(final boolean defeated) {
 		
 		if(defeated) {
+			if(monster.shadow) {
+				player.gracePeriod = 4;
+			} else {
+				player.gracePeriod = 6;
+			}
 			metronome.clearEvents();
 			metronome.queueEvent(monster.name + " was defeated!", Palette.BLUE, new Runnable() {
 				@Override
@@ -141,6 +146,7 @@ public class Combat {
 				}
 			});
 		} else {
+			player.gracePeriod = 1;
 			metronome.queueEvent("Fled the battle!", Palette.BLUE, new Runnable() {
 				@Override
 				public void run() {
@@ -177,6 +183,7 @@ public class Combat {
 				spell(player, monster);
 			} else {
 				GameContext.game.shakeScreen();
+				return;
 			}
 			break;
 		}

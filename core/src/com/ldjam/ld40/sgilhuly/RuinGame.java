@@ -98,6 +98,7 @@ public class RuinGame extends ApplicationAdapter {
 			drawers[i] = new MapDrawer(i);
 		}
 		townEvents.addLast(new TownEvent(EventType.NAME));
+		townEvents.addLast(new TownEvent(EventType.LEVEL));
 		ui = new Texture("texture/ui.png");
 		portrait = new Texture("texture/portrait.png");
 		townBackground = new Texture("texture/townBackground.png");
@@ -173,15 +174,17 @@ public class RuinGame extends ApplicationAdapter {
 							townEvents.removeFirst();
 						}
 						break;
-					case NAME:
 					case HEAL:
+						player.heal();
+					case NAME:
 						if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
 							townEvents.removeFirst();
 						}
 						break;
 					case WIN:
 						if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-							System.exit(0);
+							//System.exit(0);
+							Gdx.app.exit();
 						}
 						break;
 					default:
@@ -209,7 +212,7 @@ public class RuinGame extends ApplicationAdapter {
 						}
 					});*/
 					//new Combat(player, Monster.chooseMonster(player.gold));
-					//player.gold++;
+					//player.gold += 10;
 				}
 			}
 		} 
@@ -277,7 +280,7 @@ public class RuinGame extends ApplicationAdapter {
 					font[Palette.GREEN].draw(batch, event.items[event.selection].text, TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case LEVEL:
-					font[Palette.BLUE].draw(batch, String.format("%d stat points\n\nPress 1 - 5 to spend", player.gold - player.lastGold), TOWN_TEXT_X, TOWN_TEXT_Y);
+					font[Palette.BLUE].draw(batch, (player.gold - player.lastGold) + " stat points\n\nPress 1 - 5 to spend", TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case NAME:
 					font[Palette.GREEN].draw(batch, "You are named Billy.\n\nPress ENTER to\nbegin your journey...", TOWN_TEXT_X, TOWN_TEXT_Y);
@@ -288,6 +291,11 @@ public class RuinGame extends ApplicationAdapter {
 				}
 			}
 		}
+	}
+	
+	public void drawNumber(BitmapFont font, SpriteBatch batch, int num, int width, int x, int y) {
+		String s = Integer.toString(num);
+		font.draw(batch, s, x + (width - s.length()) * 5, y);
 	}
 	
 	public void drawUI() {
@@ -302,7 +310,7 @@ public class RuinGame extends ApplicationAdapter {
 		// Name
 		font[Palette.GREEN].draw(batch, player.name, 122, 82 + Constants.TEXT_OFFSET);
 		// Gold
-		font[Palette.YELLOW].draw(batch, String.format("%2d", player.gold), 131, 55 + Constants.TEXT_OFFSET);
+		drawNumber(font[Palette.YELLOW], batch, player.gold, 2, 131, 55 + Constants.TEXT_OFFSET);
 		// Compass
 		font[Palette.GREEN].draw(batch, Map.DIR_LETTERS[player.posDir], 129, 47 + Constants.TEXT_OFFSET);
 		// Items
@@ -317,15 +325,16 @@ public class RuinGame extends ApplicationAdapter {
 		font[Palette.GREEN].draw(batch, "agi", 122, 10 + Constants.TEXT_OFFSET);
 		font[Palette.GREEN].draw(batch, "foc", 122, 2 + Constants.TEXT_OFFSET);
 
-		font[player.strCalc < player.str ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.strCalc), 144, 34 + Constants.TEXT_OFFSET);
-		font[player.perCalc < player.per ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.perCalc), 144, 26 + Constants.TEXT_OFFSET);
-		font[player.spdCalc < player.spd ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.spdCalc), 144, 18 + Constants.TEXT_OFFSET);
-		font[player.agiCalc < player.agi ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.agiCalc), 144, 10 + Constants.TEXT_OFFSET);
-		font[player.focCalc < player.foc ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.focCalc), 144, 2 + Constants.TEXT_OFFSET);
+		drawNumber(font[player.strCalc < player.str ? Palette.RED : Palette.GREEN], batch, player.strCalc, 3, 144, 34 + Constants.TEXT_OFFSET);
+		drawNumber(font[player.perCalc < player.per ? Palette.RED : Palette.GREEN], batch, player.perCalc, 3, 144, 26 + Constants.TEXT_OFFSET);
+		drawNumber(font[player.spdCalc < player.spd ? Palette.RED : Palette.GREEN], batch, player.spdCalc, 3, 144, 18 + Constants.TEXT_OFFSET);
+		drawNumber(font[player.agiCalc < player.agi ? Palette.RED : Palette.GREEN], batch, player.agiCalc, 3, 144, 10 + Constants.TEXT_OFFSET);
+		drawNumber(font[player.focCalc < player.foc ? Palette.RED : Palette.GREEN], batch, player.focCalc, 3, 144, 2 + Constants.TEXT_OFFSET);
 	}
 	
 	public void visitTown() {
-		if(player.gold > 50) {
+		
+		if(player.gold >= Player.MAX_GOLD) {
 			townEvents.addLast(new TownEvent(EventType.WIN));
 		} else {
 			townEvents.addLast(new TownEvent(EventType.HEAL));
@@ -340,14 +349,14 @@ public class RuinGame extends ApplicationAdapter {
 			}
 			
 			// Check for new items
-			for(int i = 1; i <= 5; i++) {
+			for(int i = 1; i <= 10; i++) {
 				if(player.gold >= i * 10 && player.lastGold < i * 10) {
 					TownEvent event = new TownEvent(EventType.ITEM);
 					event.addItems(new Item[] {
-							Item.ITEMS[0][i],
-							Item.ITEMS[1][i],
-							Item.ITEMS[2][i],
-							Item.ITEMS[4][i]
+							Item.ITEMS[0][Math.min(i, 5)],
+							Item.ITEMS[1][Math.min(i, 5)],
+							Item.ITEMS[2][Math.min(i, 5)],
+							Item.ITEMS[4][Math.min(i, 5)]
 					});
 					townEvents.addLast(event);
 				}

@@ -35,6 +35,9 @@ public class Transition {
 		}
 		if(progress > DURATION * 1.5) {
 			GameContext.player.posLevel = targetLevel;
+			if(targetLevel == 1 && goingUp == false) {
+				GameContext.player.posDir = Map.START_DIR;
+			}
 			GameContext.currentMap = Map.MAPS[targetLevel];
 		}
 		if(progress > DURATION * 3) {

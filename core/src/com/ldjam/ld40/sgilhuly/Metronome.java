@@ -5,8 +5,8 @@ import com.badlogic.gdx.utils.Queue;
 public class Metronome {
 
 	private static final float WRITE_DELAY = 0.015f;
-	private static final float WAIT_DELAY = 0.75f;
-	private static final float COOLDOWN_DELAY = 0.15f;
+	private static final float WAIT_DELAY = 0.5f;
+	private static final float COOLDOWN_DELAY = 0.05f;
 	
 	//public static // What was I going to write here ???
 	

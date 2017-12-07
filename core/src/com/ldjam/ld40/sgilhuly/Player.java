@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 public class Player extends Creature {
 	
+	public static final int MAX_GOLD = 99;
+	
 	class Savegame {
 		public int gold;
 		public ArrayList<int[]> goldPicked = new ArrayList<int[]>();
+		public ArrayList<Monster> monstersBeaten = new ArrayList<Monster>();
 	}
 	
 	public Savegame save = new Savegame();
@@ -15,8 +18,9 @@ public class Player extends Creature {
 	public int posX;
 	public int posY;
 	public int posDir;
-	public int lastGold = 0;
+	public int lastGold = -5; // start with 5 skill points
 	public int gold = 0;
+	public int gracePeriod = 0;
 	
 	public int spells;
 	public int spellsMax;
@@ -56,6 +60,7 @@ public class Player extends Creature {
 		
 		save.gold = gold;
 		save.goldPicked.clear();
+		save.monstersBeaten.clear();
 		
 		heal();
 	}
@@ -68,6 +73,13 @@ public class Player extends Creature {
 			Map.MAPS[loc[2]].setMap(loc[0], loc[1], Map.TREASURE);
 		}
 		
+		for(Monster m : save.monstersBeaten) {
+			m.defeated = false;
+		}
+
+		save.goldPicked.clear();
+		save.monstersBeaten.clear();
+		
 		heal();
 		
 		posLevel = 1;
@@ -78,6 +90,15 @@ public class Player extends Creature {
 		GameContext.combat = null;
 	}
 	
+	public void gainGold(final int amount) {
+		GameContext.metronome.queueEvent("Gained " + amount + " gold!", Palette.YELLOW, new Runnable() {
+			@Override
+			public void run() {
+				gold = Math.min(gold + amount, MAX_GOLD);
+			}
+		});
+	}
+	
 	public void step(int amount) {
 		byte space = GameContext.currentMap.accessMap(posX, posY, posDir, amount, 0);
 		if(space == Map.TREASURE) {
@@ -86,25 +107,25 @@ public class Player extends Creature {
 			int goldY = posY + b.forwardY * amount;
 			GameContext.currentMap.setMap(goldX, goldY, Map.TREASURE_USED);
 			save.goldPicked.add(new int[] {goldX, goldY, posLevel});
-			GameContext.metronome.queueEvent("Gained 1 gold!", Palette.YELLOW);
-			if(gold < 99) {
-				gold++;
-			}
+			gainGold(1);
 		} else if(space == Map.HOARD) {
-			gold = 99;
-			GameContext.metronome.queueEvent("Gained 999 gold!", Palette.YELLOW);
+			gainGold(999999);
 		} else if(Map.isPassable(space)) {
 			Basis b = Map.dirToBasis(posDir);
 			posX += b.forwardX * amount;
 			posY += b.forwardY * amount;
 			
 			if(space == Map.OPEN) {
-				float chance = 0.06f;
-				if(gold > 60) {
-					chance = 0.1f;
-				}
-				if(Math.random() < chance) {
-					new Combat(this, Monster.chooseMonster(gold));
+				if(gracePeriod > 0) {
+					gracePeriod--;
+				} else {
+					float chance = 0.08f;
+					if(gold >= Player.MAX_GOLD) {
+						chance = 0.12f;
+					}
+					if(Math.random() < chance) {
+						new Combat(this, Monster.chooseMonster(gold));
+					}
 				}
 			} else if(space == Map.STAIRS_UP) {
 				GameContext.transition = new Transition(posLevel - 1, true);
@@ -163,7 +184,7 @@ public class Player extends Creature {
 		final int totalDamage = (int) Helper.resist(damage, resistance);
 		final int affectedStat = (int) (Math.random() * 5);
 		
-		GameContext.metronome.interruptEvent(String.format("Lost %d %s! <%d>", totalDamage, Creature.STAT_NAMES[affectedStat], (int) damage), Palette.RED, new Runnable() {
+		GameContext.metronome.interruptEvent("Lost " + totalDamage + " " + Creature.STAT_NAMES[affectedStat] + "! <" + (int) damage + ">", Palette.RED, new Runnable() {
 			@Override
 			public void run() {
 				getWounded(totalDamage, affectedStat);
@@ -233,7 +254,7 @@ public class Player extends Creature {
 
 	@Override
 	public String spellText() {
-		return String.format("%s used!", wand.name);
+		return wand.name + " used!";
 	}
 
 	@Override
