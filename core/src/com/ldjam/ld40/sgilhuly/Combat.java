@@ -72,9 +72,9 @@ public class Combat {
 		batch.draw(GameContext.game.combatUI, 0, 0);
 		batch.draw(player.weapon.icon, 10, 24);
 		batch.draw(player.wand.icon, 10, 13);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "1. " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "2. " + player.wand.name + " " + player.spells + "/" + player.spellsMax, 21, 14 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3. Flee", 21, 3 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "1 " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "2 " + player.wand.name + " " + player.spells + "/" + player.spellsMax, 21, 14 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
 		
 		GameContext.game.combatHealthBarFill.setRegionY(32 - (int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
 		GameContext.game.combatHealthBarFill.setRegionHeight((int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
@@ -96,6 +96,10 @@ public class Combat {
 			metronome.queueEvent("Free attack!", Palette.BLUE);
 			swing(player, monster);
 		}
+		
+		if(monster.sound != null) {
+			GameContext.audio.playSound(monster.sound);
+		}
 	}
 	
 	public void swing(Creature a, final Creature b) {
@@ -110,15 +114,21 @@ public class Combat {
 					@Override
 					public void run() {
 						b.takeDamage(totalDamage);
+						GameContext.audio.playHit();
 					}
 				});
 			} else {
-				metronome.queueEvent("Miss!", Palette.PURPLE);
+				metronome.queueEvent("Miss!", Palette.PURPLE, new Runnable() {
+					@Override
+					public void run() {
+						GameContext.audio.playSound(GameContext.audio.dodge);
+					}
+				});
 			}
 		}
 	}
 	
-	public void spell(Creature a, final Creature b) {
+	public void spell(final Creature a, final Creature b) {
 		metronome.queueEvent(a.spellText(), Palette.GREY);
 		float damage = a.spellDamage();
 		final int totalDamage = (int) b.resistDamage(damage, a.spellElement());
@@ -126,6 +136,7 @@ public class Combat {
 			@Override
 			public void run() {
 				b.takeDamage(totalDamage);
+				GameContext.audio.playSpell(a.spellElement());
 			}
 		});
 	}
@@ -143,6 +154,7 @@ public class Combat {
 				@Override
 				public void run() {
 					moveMonster(defeated);
+					GameContext.audio.playSound(GameContext.audio.monsterDefeated);
 				}
 			});
 		} else {
@@ -151,6 +163,7 @@ public class Combat {
 				@Override
 				public void run() {
 					moveMonster(defeated);
+					GameContext.audio.playSound(GameContext.audio.dodge);
 				}
 			});
 		}
@@ -183,6 +196,7 @@ public class Combat {
 				spell(player, monster);
 			} else {
 				GameContext.game.shakeScreen();
+				GameContext.audio.playSound(GameContext.audio.error);
 				return;
 			}
 			break;
@@ -194,12 +208,19 @@ public class Combat {
 			int adjust = -10;
 			if(monster.shadow) {
 				metronome.queueEvent("Shadows slow you!", Palette.PURPLE);
+				GameContext.audio.playSound(GameContext.audio.shadowAppears);
 				adjust -= 10;
 			}
 			if(Math.random() < Helper.sigmoid(player.spdCalc + adjust)) {
 				endCombat(false);
 			} else {
-				metronome.queueEvent("Unable to escape!", Palette.ORANGE);
+				metronome.queueEvent("Unable to escape!", Palette.ORANGE, new Runnable() {
+					@Override
+					public void run() {
+						GameContext.game.shakeScreen();
+						GameContext.audio.playSound(GameContext.audio.error);
+					}
+				});
 			}
 		}
 	}

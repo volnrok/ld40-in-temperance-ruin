@@ -95,6 +95,7 @@ public class Player extends Creature {
 			@Override
 			public void run() {
 				gold = Math.min(gold + amount, MAX_GOLD);
+				GameContext.audio.playSound(GameContext.audio.coin);
 			}
 		});
 	}
@@ -116,6 +117,7 @@ public class Player extends Creature {
 			posY += b.forwardY * amount;
 			
 			if(space == Map.OPEN) {
+				GameContext.audio.playStep();
 				if(gracePeriod > 0) {
 					gracePeriod--;
 				} else {
@@ -137,6 +139,7 @@ public class Player extends Creature {
 			}
 		} else {
 			GameContext.game.shakeScreen();
+			GameContext.audio.playSound(GameContext.audio.error);
 		}
 	}
 	
@@ -194,6 +197,8 @@ public class Player extends Creature {
 	
 	public void getWounded(int damage, int affectedStat) {
 		GameContext.game.shakeScreen();
+		GameContext.audio.playHit();
+		
 		wounds.add(new StatMod(affectedStat, -damage));
 		recalcStats();
 		
@@ -203,6 +208,8 @@ public class Player extends Creature {
 				@Override
 				public void run() {
 					GameContext.game.shakeScreen();
+					GameContext.audio.playHit();
+					
 					loadgame();
 				}
 			});

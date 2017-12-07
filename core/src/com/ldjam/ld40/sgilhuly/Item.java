@@ -48,7 +48,7 @@ public class Item extends Effect {
 			{
 				new Item(SlotType.WAND, "Sparks", tex[2][0], 0, 0, 0, 0, 0).element(Combat.ELEC),
 				new Item(SlotType.WAND, "Firebolt", tex[2][1], 2, 0, 0, 0, 3).element(Combat.FIRE),
-				new Item(SlotType.WAND, "Acid Splash", tex[2][2], 0, 0, 2, 0, 6).element(Combat.POIS),
+				new Item(SlotType.WAND, "Acid Burst", tex[2][2], 0, 0, 2, 0, 6).element(Combat.POIS),
 				new Item(SlotType.WAND, "Ice Shards", tex[2][3], 0, 0, 0, 2, 9).element(Combat.ICE),
 				new Item(SlotType.WAND, "Distortion", tex[2][4], 0, 2, 0, 0, 12).element(Combat.PHYS),
 				new Item(SlotType.WAND, "Death Ray", tex[2][5], 0, 0, 0, 0, 20).element(Combat.DEATH)
@@ -91,7 +91,7 @@ public class Item extends Effect {
 		this.name = "Blessing";
 		this.icon = blessingRegion;
 		this.ringPower = ringPower;
-		this.text = "+" + ringPower + " to all stats";
+		this.text = "+" + ringPower + " to all stats\n";
 	}
 	
 	public Item(SlotType slot, String name, TextureRegion icon, int ringPower, String text) {
@@ -115,19 +115,19 @@ public class Item extends Effect {
 		
 		this.text = "";
 		if(str > 0) {
-			this.text += "+" + str + " str";
+			this.text += "+" + str + " str\n";
 		}
 		if(per > 0) {
-			this.text += "+" + per + " per";
+			this.text += "+" + per + " per\n";
 		}
 		if(spd > 0) {
-			this.text += "+" + spd + " spd";
+			this.text += "+" + spd + " spd\n";
 		}
 		if(agi > 0) {
-			this.text += "+" + agi + " agi";
+			this.text += "+" + agi + " agi\n";
 		}
 		if(foc > 0) {
-			this.text += "+" + foc + " foc";
+			this.text += "+" + foc + " foc\n";
 		}
 	}
 	

@@ -8,4 +8,5 @@ public abstract class GameContext {
 	public static Map currentMap;
 	public static Metronome metronome = new Metronome();
 	public static Transition transition;
+	public static AudioManager audio;
 }

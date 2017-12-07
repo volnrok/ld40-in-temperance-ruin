@@ -110,6 +110,8 @@ public class RuinGame extends ApplicationAdapter {
 		combatHealthBarFill = new TextureRegion(healthBar);
 		combatUI = new Texture("texture/combatUI.png");
 		player = new Player();
+		GameContext.audio = new AudioManager();
+		GameContext.audio.playMusic(GameContext.audio.townMusic);
 	}
 
 	@Override
@@ -146,6 +148,7 @@ public class RuinGame extends ApplicationAdapter {
 							player.equip(event.items[event.selection]);
 							player.recalcStats();
 							townEvents.removeFirst();
+							GameContext.audio.playSound(GameContext.audio.coin);
 						}
 						break;
 					case LEVEL:
@@ -153,22 +156,27 @@ public class RuinGame extends ApplicationAdapter {
 							player.str++;
 							player.lastGold++;
 							player.recalcStats();
+							GameContext.audio.playSound(GameContext.audio.dodge);
 						} else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
 							player.per++;
 							player.lastGold++;
 							player.recalcStats();
+							GameContext.audio.playSound(GameContext.audio.dodge);
 						} else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
 							player.spd++;
 							player.lastGold++;
 							player.recalcStats();
+							GameContext.audio.playSound(GameContext.audio.dodge);
 						} else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
 							player.agi++;
 							player.lastGold++;
 							player.recalcStats();
+							GameContext.audio.playSound(GameContext.audio.dodge);
 						} else if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
 							player.foc++;
 							player.lastGold++;
 							player.recalcStats();
+							GameContext.audio.playSound(GameContext.audio.dodge);
 						}
 						if(player.gold <= player.lastGold) {
 							townEvents.removeFirst();
@@ -215,7 +223,9 @@ public class RuinGame extends ApplicationAdapter {
 					//player.gold += 10;
 				}
 			}
-		} 
+		}
+		
+		GameContext.audio.update(Gdx.graphics.getDeltaTime());
 		
 		camShake *= 0.9f;
 		GameContext.metronome.update(Gdx.graphics.getDeltaTime());

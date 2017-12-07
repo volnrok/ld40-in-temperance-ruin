@@ -23,6 +23,12 @@ public class Transition {
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
 		pixmap.drawPixel(0, 0, Palette.BLACK);
 		black = new Texture(pixmap);
+		
+		if((targetLevel == 1 && goingUp == false) || (targetLevel == 0 && goingUp == true)) {
+			GameContext.audio.stopMusic();
+		}
+		
+		GameContext.audio.playSound(GameContext.audio.stairs);
 	}
 	
 	public void updateAndDraw(float delta, SpriteBatch batch) {
@@ -44,6 +50,10 @@ public class Transition {
 			GameContext.transition = null;
 			if(targetLevel == 1 && goingUp == false) {
 				GameContext.player.savegame();
+				GameContext.audio.playMusic(GameContext.audio.dungeonMusic);
+			}
+			if(targetLevel == 0 && goingUp == true) {
+				GameContext.audio.playMusic(GameContext.audio.townMusic);
 			}
 		}
 	}
