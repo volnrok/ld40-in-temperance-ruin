@@ -73,9 +73,9 @@ public class Combat {
 		batch.draw(player.weapon.icon, 10, 24);
 		batch.draw(player.wand.icon, 10, 13);
 
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, "1 " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, String.format("2 %s %d/%d", player.wand.name, player.spells, player.spellsMax), 21, 14 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "1 " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, String.format("2 %s %d/%d", player.wand.name, player.spells, player.spellsMax), 21, 14 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
 		
 		GameContext.game.combatHealthBarFill.setRegionY(32 - (int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
 		GameContext.game.combatHealthBarFill.setRegionHeight((int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
@@ -111,7 +111,7 @@ public class Combat {
 			if(a.didHit(b)) {
 				float damage = a.swingDamage();
 				final int totalDamage = (int) b.resistDamage(damage, PHYS);
-				metronome.queueEvent("Hit for " + totalDamage + " <" + (int) damage + ">", Palette.GREY, new Runnable() {
+				metronome.queueEvent(String.format("Hit for %d! <%d>", totalDamage, (int) damage), Palette.GREY, new Runnable() {
 					@Override
 					public void run() {
 						b.takeDamage(totalDamage);
@@ -133,7 +133,7 @@ public class Combat {
 		metronome.queueEvent(a.spellText(), Palette.GREY);
 		float damage = a.spellDamage();
 		final int totalDamage = (int) b.resistDamage(damage, a.spellElement());
-		metronome.queueEvent(totalDamage + " " + ELEMENT_NAMES[a.spellElement()] + "! <" + (int) damage + ">", ELEMENT_PALETTES[a.spellElement()], new Runnable() {
+		metronome.queueEvent(String.format("%d %s! <%d>", totalDamage, ELEMENT_NAMES[a.spellElement()], (int) damage), ELEMENT_PALETTES[a.spellElement()], new Runnable() {
 			@Override
 			public void run() {
 				b.takeDamage(totalDamage);

@@ -291,7 +291,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 					font[Palette.GREEN].draw(batch, event.items[event.selection].text, TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case LEVEL:
-					font[Palette.BLUE].draw(batch, (player.gold - player.lastGold) + " stat points\n\nPress 1 - 5 to spend", TOWN_TEXT_X, TOWN_TEXT_Y);
+					font[Palette.BLUE].draw(batch, String.format("%d stat points\n\nPress 1 - 5 to spend", player.gold - player.lastGold), TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case NAME:
 					font[Palette.GREEN].draw(batch, "You are named Billy.\n\nPress ENTER to\nbegin your journey...", TOWN_TEXT_X, TOWN_TEXT_Y);
@@ -302,11 +302,6 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 				}
 			}
 		}
-	}
-	
-	public void drawNumber(BitmapFont font, SpriteBatch batch, int num, int width, int x, int y) {
-		String s = Integer.toString(num);
-		font.draw(batch, s, x + (width - s.length()) * 5, y);
 	}
 	
 	public void drawUI() {
@@ -320,7 +315,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		// Name
 		font[Palette.GREEN].draw(batch, player.name, 122, 82 + Constants.TEXT_OFFSET);
 		// Gold
-		drawNumber(font[Palette.YELLOW], batch, player.gold, 2, 131, 55 + Constants.TEXT_OFFSET);
+		font[Palette.YELLOW].draw(batch, String.format("%2d", player.gold), 131, 55 + Constants.TEXT_OFFSET);
 		// Compass
 		font[Palette.GREEN].draw(batch, Map.DIR_LETTERS[player.posDir], 129, 47 + Constants.TEXT_OFFSET);
 		// Items
@@ -335,11 +330,12 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		font[Palette.GREEN].draw(batch, "agi", 122, 10 + Constants.TEXT_OFFSET);
 		font[Palette.GREEN].draw(batch, "foc", 122, 2 + Constants.TEXT_OFFSET);
 
-		drawNumber(font[player.strCalc < player.str ? Palette.RED : Palette.GREEN], batch, player.strCalc, 3, 144, 34 + Constants.TEXT_OFFSET);
-		drawNumber(font[player.perCalc < player.per ? Palette.RED : Palette.GREEN], batch, player.perCalc, 3, 144, 26 + Constants.TEXT_OFFSET);
-		drawNumber(font[player.spdCalc < player.spd ? Palette.RED : Palette.GREEN], batch, player.spdCalc, 3, 144, 18 + Constants.TEXT_OFFSET);
-		drawNumber(font[player.agiCalc < player.agi ? Palette.RED : Palette.GREEN], batch, player.agiCalc, 3, 144, 10 + Constants.TEXT_OFFSET);
-		drawNumber(font[player.focCalc < player.foc ? Palette.RED : Palette.GREEN], batch, player.focCalc, 3, 144, 2 + Constants.TEXT_OFFSET);
+
+		font[player.strCalc < player.str ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.strCalc), 144, 34 + Constants.TEXT_OFFSET);
+		font[player.perCalc < player.per ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.perCalc), 144, 26 + Constants.TEXT_OFFSET);
+		font[player.spdCalc < player.spd ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.spdCalc), 144, 18 + Constants.TEXT_OFFSET);
+		font[player.agiCalc < player.agi ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.agiCalc), 144, 10 + Constants.TEXT_OFFSET);
+		font[player.focCalc < player.foc ? Palette.RED : Palette.GREEN].draw(batch, String.format("%3d", player.focCalc), 144, 2 + Constants.TEXT_OFFSET);
 	}
 	
 	public void visitTown() {

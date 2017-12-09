@@ -91,7 +91,7 @@ public class Player extends Creature {
 	}
 	
 	public void gainGold(final int amount) {
-		GameContext.metronome.queueEvent("Gained " + amount + " gold!", Palette.YELLOW, new Runnable() {
+		GameContext.metronome.queueEvent(String.format("Gained %d gold!", amount), Palette.YELLOW, new Runnable() {
 			@Override
 			public void run() {
 				gold = Math.min(gold + amount, MAX_GOLD);
@@ -187,7 +187,7 @@ public class Player extends Creature {
 		final int totalDamage = (int) Helper.resist(damage, resistance);
 		final int affectedStat = (int) (Math.random() * 5);
 		
-		GameContext.metronome.interruptEvent("Lost " + totalDamage + " " + Creature.STAT_NAMES[affectedStat] + "! <" + (int) damage + ">", Palette.RED, new Runnable() {
+		GameContext.metronome.interruptEvent(String.format("Lost %d %s! <%d>", totalDamage, Creature.STAT_NAMES[affectedStat], (int) damage), Palette.RED, new Runnable() {
 			@Override
 			public void run() {
 				getWounded(totalDamage, affectedStat);
@@ -261,7 +261,7 @@ public class Player extends Creature {
 
 	@Override
 	public String spellText() {
-		return wand.name + " used!";
+		return String.format("%s used!", wand.name);
 	}
 
 	@Override

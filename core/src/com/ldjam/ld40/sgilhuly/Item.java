@@ -91,7 +91,7 @@ public class Item extends Effect {
 		this.name = "Blessing";
 		this.icon = blessingRegion;
 		this.ringPower = ringPower;
-		this.text = "+" + ringPower + " to all stats\n";
+		this.text = String.format("+%d to all stats",  ringPower);
 	}
 	
 	public Item(SlotType slot, String name, TextureRegion icon, int ringPower, String text) {
@@ -115,25 +115,25 @@ public class Item extends Effect {
 		
 		this.text = "";
 		if(str > 0) {
-			this.text += "+" + str + " str\n";
+			 this.text += String.format("+%d str\n", str);
 		}
 		if(per > 0) {
-			this.text += "+" + per + " per\n";
+			 this.text += String.format("+%d per\n", per);
 		}
 		if(spd > 0) {
-			this.text += "+" + spd + " spd\n";
+			 this.text += String.format("+%d spd\n", spd);
 		}
 		if(agi > 0) {
-			this.text += "+" + agi + " agi\n";
+			 this.text += String.format("+%d agi\n", agi);
 		}
 		if(foc > 0) {
-			this.text += "+" + foc + " foc\n";
+			 this.text += String.format("+%d foc\n", foc);
 		}
 	}
 	
 	public Item phys(int physResist) {
 		this.physResist = physResist;
-		this.text = physResist + " damage resistance\n" + this.text;
+		this.text = String.format("%d damage resistance\n", physResist) + this.text;
 		return this;
 	}
 	
@@ -144,7 +144,7 @@ public class Item extends Effect {
 	
 	public Item swings(int swings) {
 		this.swings = swings;
-		this.text = "+" + " extra swing\n" + this.text;
+		this.text = String.format("+%d extra swing\n", swings) + this.text;
 		return this;
 	}
 
