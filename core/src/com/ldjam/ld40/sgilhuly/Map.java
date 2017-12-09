@@ -11,6 +11,8 @@ public class Map {
 	public static final byte STAIRS_UP = 4;
 	public static final byte STAIRS_DOWN = 5;
 	public static final byte HOARD = 6;
+	public static final byte BASIN = 7;
+	public static final byte BASIN_USED = 8;
 	
 	public static final int NORTH = 0;
 	public static final int EAST = 1;
@@ -54,11 +56,25 @@ public class Map {
 		return mapData[posY][posX];
 	}
 	
+	public byte accessMap(int posX, int posY) {
+		return mapData[posY][posX];
+	}
+	
 	public void setMap(int posX, int posY, byte val) {
 		posX = Helper.iclamp(posX, 0, MAP_WIDTH - 1);
 		posY = Helper.iclamp(posY, 0, MAP_HEIGHT - 1);
 		
 		mapData[posY][posX] = val;
+	}
+	
+	public void resetConsumables() {
+		for(int y = 0; y < MAP_HEIGHT; y++) {
+			for(int x = 0; x < MAP_WIDTH; x++) {
+				if(mapData[y][x] == BASIN_USED) {
+					mapData[y][x] = BASIN;
+				}
+			}
+		}
 	}
 	
 	public static Basis dirToBasis(int dir) {
@@ -73,6 +89,8 @@ public class Map {
 			return TREASURE;
 		case 'p':
 			return TREASURE_USED;
+		case 'b':
+			return BASIN;
 		case '^':
 			return STAIRS_UP;
 		case 'v':
@@ -90,6 +108,8 @@ public class Map {
 		case WALL:
 		case TREASURE:
 		case TREASURE_USED:
+		case BASIN:
+		case BASIN_USED:
 		case HOARD:
 			return false;
 		default:
@@ -108,7 +128,7 @@ public class Map {
 			"#  # #  # ##### #    #t#",
 			"#       #   t## #### ###",
 			"#  #      ####         #",
-			"#### ########## #####  #",
+			"#### b######### #####  #",
 			"#               #      #",
 			"# ## ###### ### # t    #",
 			"# ##      # ### ########",
@@ -119,7 +139,7 @@ public class Map {
 			"#  t#  #  ###   ### ####",
 			"#   ####  #      ## #t #",
 			"# ###     #   #   # #  #",
-			"#         #  ###  # ## #",
+			"#         #  ###  b ## #",
 			"#  ### ###   t#        #",
 			"# #       #       # v  #",
 			"# # #   # #       # ## #",
@@ -137,7 +157,7 @@ public class Map {
 			"#      v#####    #    ##",
 			"#### ###    # #  #### ##",
 			"#### #   #t   #     # ##",
-			"#t     ########  ## # ##",
+			"#t     b#######  ## # ##",
 			"## ###           #  # ##",
 			"## #   ###### ## #v #  #",
 			"#  #t# #v     ##t#  # t#",
@@ -169,7 +189,7 @@ public class Map {
 			"# # # ##^ #  v  ###### #",
 			"#   # ##  #     #      #",
 			"# #   ### # t#t ## ### #",
-			"#t# # ### #     ##   ###",
+			"#t# # ### #  b  ##   ###",
 			"### # v## #     ## #   #",
 			"#t# #     ### #### ### #",
 			"# # ##### ###      ##  #",

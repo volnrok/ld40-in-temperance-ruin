@@ -206,7 +206,7 @@ public class Combat {
 		monster.chooseAction();
 		
 		if(action == FLEE) {
-			int adjust = -10;
+			int adjust = -15;
 			if(monster.shadow) {
 				metronome.queueEvent("Shadows slow you!", Palette.PURPLE);
 				GameContext.audio.playSound(GameContext.audio.shadowAppears);

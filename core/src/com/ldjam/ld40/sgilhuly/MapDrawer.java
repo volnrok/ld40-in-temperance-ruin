@@ -18,6 +18,8 @@ public class MapDrawer {
 	private Texture[] pedestal;
 	private Texture[] emptyPedestal;
 	private Texture[] hoard;
+	private Texture[] basin;
+	private Texture[] emptyBasin;
 	
 	public MapDrawer(int palette) {
 		
@@ -48,6 +50,14 @@ public class MapDrawer {
 		hoard = new Texture[] {
 				Palette.loadSwapped("texture/deco/hoard.png", Palette.GREY, palette),
 				Palette.loadSwapped("texture/deco/hoardFar.png", Palette.GREY, palette)
+		};
+		basin = new Texture[] {
+				Palette.loadSwapped("texture/deco/basin.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/basinFar.png", Palette.GREY, palette)
+		};
+		emptyBasin = new Texture[] {
+				Palette.loadSwapped("texture/deco/emptyBasin.png", Palette.GREY, palette),
+				Palette.loadSwapped("texture/deco/emptyBasinFar.png", Palette.GREY, palette)
 		};
 	}
 
@@ -125,6 +135,10 @@ public class MapDrawer {
 			return pedestal;
 		case Map.TREASURE_USED:
 			return emptyPedestal;
+		case Map.BASIN:
+			return basin;
+		case Map.BASIN_USED:
+			return emptyBasin;
 		case Map.HOARD:
 			return hoard;
 		default:

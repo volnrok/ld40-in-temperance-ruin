@@ -31,6 +31,8 @@ public class Player extends Creature {
 	public Item wand;
 	public Item ring;
 	
+	private boolean ready = false;
+	
 	public Player() {
 		super(10, 10, 10, 10, 10, "Billy", 100);
 		//super(100, 100, 100, 100, 100, "Billy", 100);
@@ -49,11 +51,13 @@ public class Player extends Creature {
 		GameContext.player = this;
 		GameContext.currentMap = Map.MAPS[posLevel];
 		
-		savegame();
+		//savegame();
 		
 		for(int i : resistances) {
 			System.out.println(i);
 		}
+		
+		ready = true;
 	}
 	
 	public void savegame() {
@@ -101,20 +105,22 @@ public class Player extends Creature {
 	}
 	
 	public void step(int amount) {
-		byte space = GameContext.currentMap.accessMap(posX, posY, posDir, amount, 0);
+		Basis b = Map.dirToBasis(posDir);
+		int newX = posX + b.forwardX * amount;
+		int newY = posY + b.forwardY * amount;
+		byte space = GameContext.currentMap.accessMap(newX, newY);
 		if(space == Map.TREASURE) {
-			Basis b = Map.dirToBasis(posDir);
-			int goldX = posX + b.forwardX * amount;
-			int goldY = posY + b.forwardY * amount;
-			GameContext.currentMap.setMap(goldX, goldY, Map.TREASURE_USED);
-			save.goldPicked.add(new int[] {goldX, goldY, posLevel});
+			GameContext.currentMap.setMap(newX, newY, Map.TREASURE_USED);
+			save.goldPicked.add(new int[] {newX, newY, posLevel});
 			gainGold(1);
+		} else if(space == Map.BASIN) {
+			GameContext.currentMap.setMap(newX, newY, Map.BASIN_USED);
+			healAtBasin();
 		} else if(space == Map.HOARD) {
 			gainGold(999999);
 		} else if(Map.isPassable(space)) {
-			Basis b = Map.dirToBasis(posDir);
-			posX += b.forwardX * amount;
-			posY += b.forwardY * amount;
+			posX = newX;
+			posY = newY;
 			
 			if(space == Map.OPEN) {
 				GameContext.audio.playStep();
@@ -154,19 +160,19 @@ public class Player extends Creature {
 	public void recalcStats() {
 		super.recalcStats();
 		
-		if(wounds != null) {
+		if(ready) {
 			// Make sure constructor has gone
 			for(StatMod s : wounds) {
 				s.apply(this);
 			}
 
-		weapon.apply(this);
-		armour.apply(this);
-		wand.apply(this);
-		ring.apply(this);
-		}
+			weapon.apply(this);
+			armour.apply(this);
+			wand.apply(this);
+			ring.apply(this);
 		
-		spellsMax = 5 + (int) (focCalc / 3);
+			spellsMax = 5 + (int) (focCalc / 3);
+		}
 	}
 	
 	public void noHealth() {
@@ -223,6 +229,23 @@ public class Player extends Creature {
 		hp = hpMax;
 		recalcStats();
 		spells = spellsMax;
+		
+		for(Map m : Map.MAPS) {
+			if(m != null) {
+				m.resetConsumables();
+			}
+		}
+	}
+	
+	public void healAtBasin() {
+		for(StatMod w : wounds) {
+			if(w.mod < 0) {
+				w.mod++;
+			}
+		}
+		hp = hpMax;
+		recalcStats();
+		GameContext.metronome.queueEvent("You ease your wounds.", Palette.BLUE);
 	}
 	
 	public void equip(Item item) {

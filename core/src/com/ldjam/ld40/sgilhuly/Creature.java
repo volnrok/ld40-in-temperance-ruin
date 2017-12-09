@@ -71,7 +71,6 @@ public abstract class Creature {
 	public boolean didHit(Creature other) {
 		int diff = atk - other.def;
 		float chance = Helper.sigmoid(diff * 2 + Constants.ACCURACY_BONUS);
-		GameContext.metronome.queueEvent(String.format("%f%% to hit", chance), Palette.YELLOW);
 		return Math.random() < chance;
 	}
 	

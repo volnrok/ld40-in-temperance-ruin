@@ -35,6 +35,6 @@ public abstract class Helper {
 	}
 	
 	public static float sigmoid(float x) {
-		return (float) (Math.exp(x / 20) / (Math.exp(x / 20) + 1));
+		return (float) (Math.exp(x / 10) / (Math.exp(x / 10) + 1));
 	}
 }
