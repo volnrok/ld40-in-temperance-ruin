@@ -3,6 +3,7 @@ package com.ldjam.ld40.sgilhuly;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -14,7 +15,7 @@ import com.badlogic.gdx.utils.Queue;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class RuinGame extends ApplicationAdapter {
+public class RuinGame extends ApplicationAdapter implements InputProcessor {
 
 	public static final int TOWN_TEXT_X = 8;
 	public static final int TOWN_TEXT_Y = 55 + Constants.TEXT_OFFSET;
@@ -220,7 +221,7 @@ public class RuinGame extends ApplicationAdapter {
 						}
 					});*/
 					//new Combat(player, Monster.chooseMonster(player.gold));
-					//player.gold += 10;
+					//player.takeDamage(2);
 				}
 			}
 		}
@@ -312,8 +313,7 @@ public class RuinGame extends ApplicationAdapter {
 		// TODO Deal with hardcoded ui element locations? nah
 		batch.draw(ui, 0, 0);
 		batch.draw(portrait, 122, 63);
-		healthBarFill.setRegionY(32 - (int) (healthBar.getHeight() * player.hp * 1.0f / player.hpMax));
-		healthBarFill.setRegionHeight((int) (healthBar.getHeight() * player.hp * 1.0f / player.hpMax));
+		setHpRegion(healthBarFill, player);
 		batch.draw(healthBarFill, 143, 47);
 		// Metronome
 		font[GameContext.metronome.displayPalette].draw(batch, GameContext.metronome.displayText, 1, 83 + Constants.TEXT_OFFSET);
@@ -377,5 +377,62 @@ public class RuinGame extends ApplicationAdapter {
 				townEvents.addLast(new TownEvent(EventType.LEVEL));
 			}
 		}
+	}
+	
+	public void setHpRegion(TextureRegion bar, Creature c) {
+		bar.setRegionY(32 - (int) (healthBar.getHeight() * c.hp * 1.0f / c.hpMax));
+		bar.setRegionHeight((int) (healthBar.getHeight() * c.hp * 1.0f / c.hpMax));
+		if(c.hp > 0 && bar.getRegionHeight() == 0) {
+			bar.setRegionY(0); // This shows light red for fractional hp
+			bar.setRegionHeight(1);
+		}
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// This is just used for character naming
+		return false;
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

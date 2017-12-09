@@ -39,11 +39,11 @@ public class Item extends Effect {
 			},
 			{
 				new Item(SlotType.ARMOUR, "Tunic", tex[1][0], 0, 0, 0, 0, 0),
-				new Item(SlotType.ARMOUR, "Padded Mail", tex[1][1], 0, 0, 0, 0, 0).phys(10),
-				new Item(SlotType.ARMOUR, "Ring Mail", tex[1][2], 0, 0, 0, 0, 0).phys(20),
-				new Item(SlotType.ARMOUR, "Magician Robe", tex[1][3], 0, 0, 0, 0, 10),
-				new Item(SlotType.ARMOUR, "Plate Mail", tex[1][4], 0, 0, 0, 0, 0).phys(30),
-				new Item(SlotType.ARMOUR, "Meteor  Mail", tex[1][5], 0, 0, 0, 0, 0).phys(40)
+				new Item(SlotType.ARMOUR, "Padded Mail", tex[1][1], 0, 0, 0, 0, 0).phys(15),
+				new Item(SlotType.ARMOUR, "Ring Mail", tex[1][2], 0, 0, 0, 0, 0).phys(30),
+				new Item(SlotType.ARMOUR, "Magician Robe", tex[1][3], 0, 0, 0, 0, 10).phys(10),
+				new Item(SlotType.ARMOUR, "Plate Mail", tex[1][4], 0, 0, 0, 0, 0).phys(40),
+				new Item(SlotType.ARMOUR, "Meteor  Mail", tex[1][5], 0, 0, 0, 0, 0).phys(50)
 			},
 			{
 				new Item(SlotType.WAND, "Sparks", tex[2][0], 0, 0, 0, 0, 0).element(Combat.ELEC),

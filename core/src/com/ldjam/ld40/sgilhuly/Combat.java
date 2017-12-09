@@ -72,9 +72,10 @@ public class Combat {
 		batch.draw(GameContext.game.combatUI, 0, 0);
 		batch.draw(player.weapon.icon, 10, 24);
 		batch.draw(player.wand.icon, 10, 13);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "1 " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "2 " + player.wand.name + " " + player.spells + "/" + player.spellsMax, 21, 14 + Constants.TEXT_OFFSET);
-		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
+
+		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, "1 " + player.weapon.name, 21, 25 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, String.format("2 %s %d/%d", player.wand.name, player.spells, player.spellsMax), 21, 14 + Constants.TEXT_OFFSET);
+		GameContext.game.font[metronome.isEmpty() ? Palette.GREY : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
 		
 		GameContext.game.combatHealthBarFill.setRegionY(32 - (int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
 		GameContext.game.combatHealthBarFill.setRegionHeight((int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
