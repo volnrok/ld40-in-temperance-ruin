@@ -245,7 +245,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 						}
 					});*/
 					//new Combat(player, Monster.chooseMonster(player.gold));
-					player.takeDamage(10);
+					//player.takeDamage(10);
 				}
 			}
 		}

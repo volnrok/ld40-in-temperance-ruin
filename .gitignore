@@ -1,3 +1,7 @@
+## Save games
+
+core/assets/*.itrsave
+
 ## Java
 
 *.class
