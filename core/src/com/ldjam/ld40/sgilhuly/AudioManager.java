@@ -21,6 +21,8 @@ public class AudioManager {
 	public Sound mimicAppears;
 	public Sound beholderAppears;
 	public Sound shadowAppears;
+	public Sound guardianAppears;
+	public Sound darkGuardianAppears;
 	
 	public Sound[] spells;
 	public Sound[] steps;
@@ -46,6 +48,8 @@ public class AudioManager {
 		mimicAppears = Gdx.audio.newSound(Gdx.files.internal("sound/MimicAppears.wav"));
 		beholderAppears = Gdx.audio.newSound(Gdx.files.internal("sound/BeholderAppears.wav"));
 		shadowAppears = Gdx.audio.newSound(Gdx.files.internal("sound/ShadowAppears.wav"));
+		guardianAppears = Gdx.audio.newSound(Gdx.files.internal("sound/GuardianAppears.wav"));
+		darkGuardianAppears = Gdx.audio.newSound(Gdx.files.internal("sound/DarkGuardianAppears.wav"));
 		
 		spells = new Sound[6];
 		spells[Combat.PHYS] = Gdx.audio.newSound(Gdx.files.internal("sound/DistortionSpell.wav"));

@@ -1,5 +1,8 @@
 package com.ldjam.ld40.sgilhuly;
 
+import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
+
 public class Map {
 	public static final int MAP_WIDTH = 24;
 	public static final int MAP_HEIGHT = 24;
@@ -19,6 +22,31 @@ public class Map {
 	public static final int SOUTH = 2;
 	public static final int WEST = 3;
 	
+	static class BossFight {
+		public int x;
+		public int y;
+		public Monster monster;
+		public BooleanSupplier condition;
+		public String message;
+		public int palette;
+		public boolean encountered = false;
+		public boolean shakingText = false;
+		
+		public BossFight(int x, int y, Monster monster, String message, int palette, BooleanSupplier condition) {
+			this.x = x;
+			this.y = y;
+			this.monster = monster;
+			this.condition = condition;
+			this.message = message;
+			this.palette = palette;
+		}
+		
+		public BossFight shakingText() {
+			shakingText = true;
+			return this;
+		}
+	}
+	
 	public static final String[] DIR_LETTERS = {
 		"n", "e", "s", "w"
 	};
@@ -32,6 +60,7 @@ public class Map {
 	
 	private byte[][] mapData;
 	public int palette;
+	public ArrayList<BossFight> bossFights = new ArrayList<BossFight>();
 	
 	public Map(int palette, String[] data) {
 		
@@ -44,6 +73,20 @@ public class Map {
 				mapData[y][x] = charToData(data[y].charAt(x));
 			}
 		}
+	}
+	
+	public Map addBossFight(BossFight fight) {
+		bossFights.add(fight);
+		return this;
+	}
+	
+	public BossFight checkForBoss(int posX, int posY) {
+		for(BossFight b : bossFights) {
+			if(b.x == posX && b.y == posY && !b.encountered && b.condition.getAsBoolean()) {
+				return b;
+			}
+		}
+		return null;
 	}
 	
 	public byte accessMap(int posX, int posY, int posDir, int forward, int right) {
@@ -74,6 +117,10 @@ public class Map {
 					mapData[y][x] = BASIN;
 				}
 			}
+		}
+		
+		for(BossFight b : bossFights) {
+			b.encountered = false;
 		}
 	}
 	
@@ -146,7 +193,12 @@ public class Map {
 			"# #   v   ######### #  #",
 			"#t# #   # ######t   #  #",
 			"########################"
-	});
+	}).addBossFight(new BossFight(16, 10, Monster.DARK_GUARDIAN, "...YoU WeRe WaRnEd...", Palette.PURPLE, new BooleanSupplier() {
+		@Override
+		public boolean getAsBoolean() {
+			return GameContext.player.gold >= Player.MAX_GOLD;
+		}
+	}).shakingText());
 	public static final Map MAP_2 = new Map(Palette.GREEN, new String[] { // 14 treasures (28)
 			"########################",
 			"##   t########      ####",
@@ -250,7 +302,12 @@ public class Map {
 			"########################",
 			"########################",
 			"########################"
-	});
+	}).addBossFight(new BossFight(19, 5, Monster.GUARDIAN, "This treasure is cursed!", Palette.YELLOW, new BooleanSupplier() {
+		@Override
+		public boolean getAsBoolean() {
+			return true;
+		}
+	}));
 	// GREY, GREEN, BLUE, PURPLE, RED, YELLOW
 	
 	public static final Map[] MAPS = {

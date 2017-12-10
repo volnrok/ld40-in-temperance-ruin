@@ -2,6 +2,7 @@ package com.ldjam.ld40.sgilhuly;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.ldjam.ld40.sgilhuly.Map.BossFight;
 
 public class Combat {
 	
@@ -42,6 +43,7 @@ public class Combat {
 	public Vector2 endPos = new Vector2(37, 35);
 	float lerp = 0;
 	float shake = 0;
+	int fleeBonus = 0;
 	
 	public Combat(Player player, Monster monster) {
 		this.player = player;
@@ -61,6 +63,17 @@ public class Combat {
 		});
 	}
 	
+	public Combat(Player player, BossFight bossFight) {
+		this(player, bossFight.monster);
+		bossFight.encountered = true;
+		if(bossFight.message != null) {
+			if(bossFight.shakingText) {
+				metronome.shaking = true;
+			}
+			metronome.queueEvent(bossFight.message, bossFight.palette);
+		}
+	}
+	
 	public void updateAndDraw(float delta, SpriteBatch batch) {
 		
 		shake *= 0.9f;
@@ -77,8 +90,7 @@ public class Combat {
 		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, String.format("2 %s %d/%d", player.wand.name, player.spells, player.spellsMax), 21, 14 + Constants.TEXT_OFFSET);
 		GameContext.game.font[metronome.isEmpty() ? Palette.BLUE : Palette.RED].draw(batch, "3 Flee", 21, 3 + Constants.TEXT_OFFSET);
 		
-		GameContext.game.combatHealthBarFill.setRegionY(32 - (int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
-		GameContext.game.combatHealthBarFill.setRegionHeight((int) (GameContext.game.healthBar.getHeight() * monster.hp * 1.0f / monster.hpMax));
+		GameContext.game.setHpRegion(GameContext.game.combatHealthBarFill, monster);
 		batch.draw(GameContext.game.combatHealthBarFill, 86, 42);
 	}
 	
@@ -150,8 +162,9 @@ public class Combat {
 			} else {
 				player.gracePeriod = 6;
 			}
+			metronome.shaking = false;
 			metronome.clearEvents();
-			metronome.queueEvent(monster.name + " was defeated!", Palette.BLUE, new Runnable() {
+			metronome.queueEvent(monster.shortName + " was defeated!", Palette.BLUE, new Runnable() {
 				@Override
 				public void run() {
 					moveMonster(defeated);
@@ -206,15 +219,21 @@ public class Combat {
 		monster.chooseAction();
 		
 		if(action == FLEE) {
-			int adjust = -15;
+			int adjusted = player.spdCalc - 20 + fleeBonus;
 			if(monster.shadow) {
-				metronome.queueEvent("Shadows slow you!", Palette.PURPLE);
-				GameContext.audio.playSound(GameContext.audio.shadowAppears);
-				adjust -= 10;
+				metronome.queueEvent("Shadows slow you!", Palette.PURPLE, new Runnable() {
+					@Override
+					public void run() {
+						GameContext.audio.playSound(GameContext.audio.shadowAppears);
+					}
+				});
+				adjusted -= 10;
 			}
-			if(Math.random() < Helper.sigmoid(player.spdCalc + adjust)) {
+			System.out.println(String.format("Flee chance is %f", Helper.sigmoid(adjusted, 20)));
+			if(Math.random() < Helper.sigmoid(adjusted, 20)) {
 				endCombat(false);
 			} else {
+				fleeBonus += 10;
 				metronome.queueEvent("Unable to escape!", Palette.ORANGE, new Runnable() {
 					@Override
 					public void run() {

@@ -35,6 +35,10 @@ public abstract class Helper {
 	}
 	
 	public static float sigmoid(float x) {
-		return (float) (Math.exp(x / 10) / (Math.exp(x / 10) + 1));
+		return sigmoid(x, Constants.ACCURACY_CURVE);
+	}
+	
+	public static float sigmoid(float x, float scale) {
+		return (float) (Math.exp(x / scale) / (Math.exp(x / scale) + 1));
 	}
 }

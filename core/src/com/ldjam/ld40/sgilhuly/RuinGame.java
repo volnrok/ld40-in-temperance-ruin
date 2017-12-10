@@ -27,7 +27,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	public static final int TOWN_ITEM_Y = 64;
 	
 	enum EventType {
-		ITEM, LEVEL, HEAL, WIN, NAME
+		ITEM, LEVEL, HEAL, WIN, NAME, LOAD
 	}
 	
 	class TownEvent {
@@ -59,7 +59,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	MapDrawer[] drawers;
 	Player player;
 	Texture ui;
-	Texture portrait;
+	Texture[] portraits;
 	Texture townBackground;
 	Texture townUI;
 	Texture arrows;
@@ -85,6 +85,8 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 			font[i] = new BitmapFont(new FileHandle("texture/font.fnt"), region);
 		}
 		
+		Gdx.input.setInputProcessor(this);
+		
 		batch = new SpriteBatch();
 		
 		camera = new OrthographicCamera();
@@ -101,7 +103,9 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		townEvents.addLast(new TownEvent(EventType.NAME));
 		townEvents.addLast(new TownEvent(EventType.LEVEL));
 		ui = new Texture("texture/ui.png");
-		portrait = new Texture("texture/portrait.png");
+		portraits = new Texture[] {
+				new Texture("texture/portraits/0.png")
+		};
 		townBackground = new Texture("texture/townBackground.png");
 		townUI = new Texture("texture/townUI.png");
 		arrows = new Texture("texture/arrows.png");
@@ -185,8 +189,28 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 						break;
 					case HEAL:
 						player.heal();
-					case NAME:
 						if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+							townEvents.removeFirst();
+						}
+						break;
+					case NAME:
+						if(player.name.length() > 0 && (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) || Gdx.input.isKeyJustPressed(Input.Keys.DEL) || Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL))) {
+							player.name = player.name.substring(0, player.name.length() - 1);
+						}
+						if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && player.name.length() > 0) {
+							townEvents.removeFirst();
+							if(GameSaver.doesSavegameExist(player.name)) {
+								townEvents.addFirst(new TownEvent(EventType.LOAD));
+							}
+						}
+						break;
+					case LOAD:
+						if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.Y)) {
+							GameSaver.LoadGame();
+							player.recalcStats();
+							townEvents.removeFirst();
+							townEvents.removeFirst(); // Remove level up event
+						} else if(Gdx.input.isKeyJustPressed(Input.Keys.N)) {
 							townEvents.removeFirst();
 						}
 						break;
@@ -294,7 +318,10 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 					font[Palette.BLUE].draw(batch, String.format("%d stat points\n\nPress 1 - 5 to spend", player.gold - player.lastGold), TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case NAME:
-					font[Palette.GREEN].draw(batch, "You are named Billy.\n\nPress ENTER to\nbegin your journey...", TOWN_TEXT_X, TOWN_TEXT_Y);
+					font[Palette.GREEN].draw(batch, "Type a name\nSelect a portrait\n\nThen press ENTER\n", TOWN_TEXT_X, TOWN_TEXT_Y);
+					break;
+				case LOAD:
+					font[Palette.GREEN].draw(batch, "Saved game found!\nLoad it? [y]/n", TOWN_TEXT_X, TOWN_TEXT_Y);
 					break;
 				case WIN:
 					font[Palette.ORANGE].draw(batch, "You have won!\n\nThanks for playing.\n\nPress ENTER to exit", TOWN_TEXT_X, TOWN_TEXT_Y);
@@ -307,7 +334,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	public void drawUI() {
 		// TODO Deal with hardcoded ui element locations? nah
 		batch.draw(ui, 0, 0);
-		batch.draw(portrait, 122, 63);
+		batch.draw(portraits[player.portrait], 122, 63);
 		setHpRegion(healthBarFill, player);
 		batch.draw(healthBarFill, 143, 47);
 		// Metronome
@@ -385,50 +412,56 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	}
 
 	@Override
-	public boolean keyTyped(char character) {
+	public boolean keyTyped(char c) {
 		// This is just used for character naming
+		if(townEvents.size > 0 && townEvents.first().type == EventType.NAME && player.name.length() < 5) {
+			// Make sure the character is printable
+			if(c == ' ' || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+				player.name += c;
+			}
+		}
 		return false;
 	}
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		return false;
 	}
 }

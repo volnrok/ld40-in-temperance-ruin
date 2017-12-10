@@ -39,11 +39,11 @@ public class Item extends Effect {
 			},
 			{
 				new Item(SlotType.ARMOUR, "Tunic", tex[1][0], 0, 0, 0, 0, 0),
-				new Item(SlotType.ARMOUR, "Padded Mail", tex[1][1], 0, 0, 0, 0, 0).phys(15),
-				new Item(SlotType.ARMOUR, "Ring Mail", tex[1][2], 0, 0, 0, 0, 0).phys(30),
+				new Item(SlotType.ARMOUR, "Padded Mail", tex[1][1], 0, 0, 0, 0, 0).phys(10),
+				new Item(SlotType.ARMOUR, "Ring Mail", tex[1][2], 0, 0, 0, 0, 0).phys(20),
 				new Item(SlotType.ARMOUR, "Magician Robe", tex[1][3], 0, 0, 0, 0, 10).phys(10),
-				new Item(SlotType.ARMOUR, "Plate Mail", tex[1][4], 0, 0, 0, 0, 0).phys(40),
-				new Item(SlotType.ARMOUR, "Meteor  Mail", tex[1][5], 0, 0, 0, 0, 0).phys(50)
+				new Item(SlotType.ARMOUR, "Plate Mail", tex[1][4], 0, 0, 0, 0, 0).phys(30),
+				new Item(SlotType.ARMOUR, "Meteor  Mail", tex[1][5], 0, 0, 0, 0, 0).phys(40)
 			},
 			{
 				new Item(SlotType.WAND, "Sparks", tex[2][0], 0, 0, 0, 0, 0).element(Combat.ELEC),
@@ -70,6 +70,13 @@ public class Item extends Effect {
 				new Item(SlotType.BLESSING, 4)
 			}
 		};
+		
+		for(int y = 0; y < ITEMS.length; y++) {
+			for(int x = 0; x < ITEMS[0].length; x++) {
+				ITEMS[y][x].x = x;
+				ITEMS[y][x].y = y;
+			}
+		}
 	}
 	
 	public SlotType slot;
@@ -85,6 +92,9 @@ public class Item extends Effect {
 	public int physResist = 0;
 	public int element = Combat.PHYS;
 	public int swings = 0;
+	
+	public int x;
+	public int y;
 	
 	public Item(SlotType slot, int ringPower) {
 		this.slot = slot;
@@ -156,7 +166,6 @@ public class Item extends Effect {
 		target.agiCalc += agiMod;
 		target.focCalc += focMod;
 		
-		target.resistances[Combat.PHYS] = physResist;
 		target.totalSwings += swings;
 		
 		if(ringPower > 0) {

@@ -33,6 +33,7 @@ public class Metronome {
 	private State state = State.NONE;
 	private float progress;
 	
+	public boolean shaking = false;
 	public String displayText = "";
 	public int displayPalette = 0;
 	
@@ -51,6 +52,17 @@ public class Metronome {
 		
 		progress += delta;
 		int displayed = (int) (progress / WRITE_DELAY);
+		
+		if(current != null && shaking) {
+			int i = (int) (Math.random() * (current.text.length() - 2)) + 1;
+			char c = current.text.charAt(i);
+			if(c >= 'a' && c <= 'z') {
+				c += 'A' - 'a';
+			} else if(c >= 'A' && c <= 'Z') {
+				c += 'a' - 'A';
+			}
+			current.text = current.text.substring(0, i) + c + current.text.substring(i + 1);
+		}
 		
 		switch(state) {
 		case NONE:

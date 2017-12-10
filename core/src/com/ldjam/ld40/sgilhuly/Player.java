@@ -2,6 +2,8 @@ package com.ldjam.ld40.sgilhuly;
 
 import java.util.ArrayList;
 
+import com.ldjam.ld40.sgilhuly.Map.BossFight;
+
 public class Player extends Creature {
 	
 	public static final int MAX_GOLD = 99;
@@ -30,11 +32,12 @@ public class Player extends Creature {
 	public Item armour;
 	public Item wand;
 	public Item ring;
+	public int portrait = 0;
 	
 	private boolean ready = false;
 	
 	public Player() {
-		super(10, 10, 10, 10, 10, "Billy", 100);
+		super(10, 10, 10, 10, 10, "", 100);
 		//super(100, 100, 100, 100, 100, "Billy", 100);
 		
 		posLevel = 0;
@@ -49,7 +52,7 @@ public class Player extends Creature {
 		ring = Item.ITEMS[3][0];
 		
 		GameContext.player = this;
-		GameContext.currentMap = Map.MAPS[posLevel];
+		GameContext.currentMap = null;
 		
 		//savegame();
 		
@@ -67,6 +70,8 @@ public class Player extends Creature {
 		save.monstersBeaten.clear();
 		
 		heal();
+		
+		GameSaver.SaveGame();
 	}
 	
 	public void loadgame() {
@@ -124,15 +129,21 @@ public class Player extends Creature {
 			
 			if(space == Map.OPEN) {
 				GameContext.audio.playStep();
-				if(gracePeriod > 0) {
-					gracePeriod--;
+				
+				BossFight fight = GameContext.currentMap.checkForBoss(newX, newY);
+				if(fight != null) {
+					new Combat(this, fight);
 				} else {
-					float chance = 0.08f;
-					if(gold >= Player.MAX_GOLD) {
-						chance = 0.12f;
-					}
-					if(Math.random() < chance) {
-						new Combat(this, Monster.chooseMonster(gold));
+					if(gracePeriod > 0) {
+						gracePeriod--;
+					} else {
+						float chance = 0.09f;
+						if(gold >= Player.MAX_GOLD) {
+							chance = 0.12f;
+						}
+						if(Math.random() < chance) {
+							new Combat(this, Monster.chooseMonster(gold));
+						}
 					}
 				}
 			} else if(space == Map.STAIRS_UP) {
@@ -172,6 +183,8 @@ public class Player extends Creature {
 			ring.apply(this);
 		
 			spellsMax = 5 + (int) (focCalc / 3);
+			
+			resistances[Combat.PHYS] = armour.physResist;
 		}
 	}
 	
@@ -239,9 +252,7 @@ public class Player extends Creature {
 	
 	public void healAtBasin() {
 		for(StatMod w : wounds) {
-			if(w.mod < 0) {
-				w.mod++;
-			}
+			w.mod = Math.min(w.mod + 2, 0);
 		}
 		hp = hpMax;
 		recalcStats();
