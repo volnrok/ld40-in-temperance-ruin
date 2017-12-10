@@ -104,7 +104,10 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		townEvents.addLast(new TownEvent(EventType.LEVEL));
 		ui = new Texture("texture/ui.png");
 		portraits = new Texture[] {
-				new Texture("texture/portraits/0.png")
+				new Texture("texture/portraits/0.png"),
+				new Texture("texture/portraits/1.png"),
+				new Texture("texture/portraits/2.png"),
+				new Texture("texture/portraits/3.png")
 		};
 		townBackground = new Texture("texture/townBackground.png");
 		townUI = new Texture("texture/townUI.png");
@@ -194,6 +197,11 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 						}
 						break;
 					case NAME:
+						if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+							player.portrait = Helper.mod(player.portrait - 1, portraits.length);
+						} else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+							player.portrait = Helper.mod(player.portrait + 1, portraits.length);
+						}
 						if(player.name.length() > 0 && (Gdx.input.isKeyJustPressed(Input.Keys.BACKSPACE) || Gdx.input.isKeyJustPressed(Input.Keys.DEL) || Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL))) {
 							player.name = player.name.substring(0, player.name.length() - 1);
 						}
