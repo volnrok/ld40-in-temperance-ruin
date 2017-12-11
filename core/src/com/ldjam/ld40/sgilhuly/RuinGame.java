@@ -55,7 +55,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	Texture fontTexture;
 	
 	SpriteBatch batch;
-	
+
 	MapDrawer[] drawers;
 	Player player;
 	Texture ui;
@@ -100,6 +100,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		for(int i = 0; i < 7; i++) {
 			drawers[i] = new MapDrawer(i);
 		}
+		
 		townEvents.addLast(new TownEvent(EventType.NAME));
 		townEvents.addLast(new TownEvent(EventType.LEVEL));
 		ui = new Texture("texture/ui.png");
@@ -124,9 +125,6 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 
 	@Override
 	public void render () {
-		camera.update();
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		if(GameContext.combat != null) {
 			if(GameContext.metronome.isEmpty()) {
@@ -257,6 +255,14 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 				}
 			}
 		}
+
+		if(GameContext.currentMap != null) {
+			GameContext.currentMap.renderer.renderFBO();
+		}
+
+		camera.update();
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		GameContext.audio.update(Gdx.graphics.getDeltaTime());
 		
@@ -264,9 +270,13 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		GameContext.metronome.update(Gdx.graphics.getDeltaTime());
 		
 		batch.setProjectionMatrix(camera.combined);
+		batch.enableBlending();
+		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		batch.begin();
 		if(GameContext.currentMap != null) {
-			drawers[GameContext.currentMap.palette].drawMap(player.posX, player.posY, player.posDir, GameContext.currentMap, batch, camShake);
+			// TODO
+			//drawers[GameContext.currentMap.palette].drawMap(player.posX, player.posY, player.posDir, GameContext.currentMap, batch, camShake);
+			GameContext.currentMap.renderer.drawToScreen(batch, camShake);
 		} else {
 			drawTownUI();
 		}

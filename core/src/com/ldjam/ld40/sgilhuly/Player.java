@@ -20,6 +20,7 @@ public class Player extends Creature {
 	public int posX;
 	public int posY;
 	public int posDir;
+	public Basis basis;
 	public int lastGold = -5; // start with 5 skill points
 	public int gold = 0;
 	public int gracePeriod = 0;
@@ -37,13 +38,14 @@ public class Player extends Creature {
 	private boolean ready = false;
 	
 	public Player() {
-		super(10, 10, 10, 10, 10, "", 100);
+		super(10, 10, 10, 10, 10, "wilo", 100);
 		//super(100, 100, 100, 100, 100, "Billy", 100);
 		
 		posLevel = 0;
 		posX = Map.START_X;
 		posY = Map.START_Y;
 		posDir = Map.START_DIR;
+		basis = Map.dirToBasis(posDir);
 
 		weapon = Item.ITEMS[0][0];
 		armour = Item.ITEMS[1][0];
@@ -110,9 +112,8 @@ public class Player extends Creature {
 	}
 	
 	public void step(int amount) {
-		Basis b = Map.dirToBasis(posDir);
-		int newX = posX + b.forwardX * amount;
-		int newY = posY + b.forwardY * amount;
+		int newX = posX + basis.forwardX * amount;
+		int newY = posY + basis.forwardY * amount;
 		byte space = GameContext.currentMap.accessMap(newX, newY);
 		if(space == Map.TREASURE) {
 			GameContext.currentMap.setMap(newX, newY, Map.TREASURE_USED);
@@ -166,6 +167,7 @@ public class Player extends Creature {
 	
 	public void turn(int amount) {
 		posDir = Helper.mod(posDir + amount, 4);
+		basis = Map.dirToBasis(posDir);
 	}
 	
 	public void recalcStats() {

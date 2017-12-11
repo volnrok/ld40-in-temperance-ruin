@@ -61,6 +61,7 @@ public class Map {
 	private byte[][] mapData;
 	public int palette;
 	public ArrayList<BossFight> bossFights = new ArrayList<BossFight>();
+	public MapRenderer renderer;
 	
 	public Map(int palette, String[] data) {
 		
@@ -73,6 +74,8 @@ public class Map {
 				mapData[y][x] = charToData(data[y].charAt(x));
 			}
 		}
+		
+		renderer = new MapRenderer(this);
 	}
 	
 	public Map addBossFight(BossFight fight) {
