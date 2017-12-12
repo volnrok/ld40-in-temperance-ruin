@@ -6,6 +6,14 @@ public abstract class Helper {
 		return start + n * (end - start);
 	}
 	
+	public static float moveTo(float n, float target, float speed) {
+		if(n > target) {
+			return Math.max(n - speed, target);
+		} else {
+			return Math.min(n + speed, target);
+		}
+	}
+	
 	public static int iclamp(int n, int min, int max) {
 		return n < min ? min : n > max ? max : n;
 	}

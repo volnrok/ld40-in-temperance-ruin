@@ -53,7 +53,7 @@ public class Metronome {
 		progress += delta;
 		int displayed = (int) (progress / WRITE_DELAY);
 		
-		if(current != null && shaking) {
+		if(current != null && shaking && current.text.length() > 3) {
 			int i = (int) (Math.random() * (current.text.length() - 2)) + 1;
 			char c = current.text.charAt(i);
 			if(c >= 'a' && c <= 'z') {

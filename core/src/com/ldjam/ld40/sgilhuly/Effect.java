@@ -43,7 +43,7 @@ class StatMod extends Effect {
 		}
 	}
 	
-	private static Stat numToStat(int num) {
+	public static Stat numToStat(int num) {
 		switch(num) {
 		case 0:
 			return Stat.STR;

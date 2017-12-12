@@ -56,7 +56,7 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 	
 	SpriteBatch batch;
 
-	MapDrawer[] drawers;
+	//MapDrawer[] drawers;
 	Player player;
 	Texture ui;
 	Texture[] portraits;
@@ -95,12 +95,13 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		
 		camera.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, 0);
 		
-		drawers = new MapDrawer[7];
+		/*drawers = new MapDrawer[7];
 		// Need grey to be 0 so it comes first
 		for(int i = 0; i < 7; i++) {
 			drawers[i] = new MapDrawer(i);
-		}
-		
+		}*/
+
+		GameContext.audio = new AudioManager(); // Need to load audio first
 		townEvents.addLast(new TownEvent(EventType.NAME));
 		townEvents.addLast(new TownEvent(EventType.LEVEL));
 		ui = new Texture("texture/ui.png");
@@ -119,7 +120,6 @@ public class RuinGame extends ApplicationAdapter implements InputProcessor {
 		combatHealthBarFill = new TextureRegion(healthBar);
 		combatUI = new Texture("texture/combatUI.png");
 		player = new Player();
-		GameContext.audio = new AudioManager();
 		GameContext.audio.playMusic(GameContext.audio.townMusic);
 	}
 

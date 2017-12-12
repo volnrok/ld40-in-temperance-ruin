@@ -20,7 +20,6 @@ public class Player extends Creature {
 	public int posX;
 	public int posY;
 	public int posDir;
-	public Basis basis;
 	public int lastGold = -5; // start with 5 skill points
 	public int gold = 0;
 	public int gracePeriod = 0;
@@ -38,14 +37,13 @@ public class Player extends Creature {
 	private boolean ready = false;
 	
 	public Player() {
-		super(10, 10, 10, 10, 10, "wilo", 100);
+		super(10, 10, 10, 10, 10, "", 100);
 		//super(100, 100, 100, 100, 100, "Billy", 100);
 		
 		posLevel = 0;
 		posX = Map.START_X;
 		posY = Map.START_Y;
 		posDir = Map.START_DIR;
-		basis = Map.dirToBasis(posDir);
 
 		weapon = Item.ITEMS[0][0];
 		armour = Item.ITEMS[1][0];
@@ -98,6 +96,8 @@ public class Player extends Creature {
 		posX = Map.START_X;
 		posY = Map.START_Y;
 		posDir = Map.START_DIR;
+		GameContext.currentMap.renderer.setPositionAndRotation(posX, posY, posDir);
+		GameContext.currentMap.renderer.refreshDecos();
 		GameContext.combat = null;
 	}
 	
@@ -112,6 +112,7 @@ public class Player extends Creature {
 	}
 	
 	public void step(int amount) {
+		Basis basis = Map.dirToBasis(posDir);
 		int newX = posX + basis.forwardX * amount;
 		int newY = posY + basis.forwardY * amount;
 		byte space = GameContext.currentMap.accessMap(newX, newY);
@@ -127,6 +128,7 @@ public class Player extends Creature {
 		} else if(Map.isPassable(space)) {
 			posX = newX;
 			posY = newY;
+			GameContext.currentMap.renderer.playerStepTo(newX, newY);
 			
 			if(space == Map.OPEN) {
 				GameContext.audio.playStep();
@@ -143,7 +145,7 @@ public class Player extends Creature {
 							chance = 0.12f;
 						}
 						if(Math.random() < chance) {
-							new Combat(this, Monster.chooseMonster(gold));
+							new Combat(this, Monster.chooseMonster(gold, posLevel));
 						}
 					}
 				}
@@ -161,13 +163,9 @@ public class Player extends Creature {
 		}
 	}
 	
-	/*public void changeFloor(boolean up) {
-		if(up && )
-	}*/
-	
 	public void turn(int amount) {
 		posDir = Helper.mod(posDir + amount, 4);
-		basis = Map.dirToBasis(posDir);
+		GameContext.currentMap.renderer.playerFace(posDir);
 	}
 	
 	public void recalcStats() {
@@ -220,10 +218,42 @@ public class Player extends Creature {
 		GameContext.game.shakeScreen();
 		GameContext.audio.playHit();
 		
+		// Make sure the player isn't one hit from full in a stat
+		boolean hasWound = false;
+		for(StatMod w : wounds) {
+			if(w.stat == StatMod.numToStat(affectedStat) && w.mod != 0) {
+				hasWound = true;
+			}
+		}
+		if(!hasWound) {
+			int statTotal = 0;
+			switch(StatMod.numToStat(affectedStat)) {
+			case AGI:
+				statTotal = agiCalc;
+				break;
+			case FOC:
+				statTotal = focCalc;
+				break;
+			case PER:
+				statTotal = perCalc;
+				break;
+			case SPD:
+				statTotal = spdCalc;
+				break;
+			case STR:
+				statTotal = strCalc;
+				break;
+			}
+			if(statTotal <= damage) {
+				damage = statTotal - 1;
+			}
+		}
+		
 		wounds.add(new StatMod(affectedStat, -damage));
 		recalcStats();
 		
 		if(strCalc <= 0 || perCalc <= 0 || spdCalc <= 0 || agiCalc <= 0 || focCalc <= 0) {
+			GameContext.metronome.shaking = false;
 			GameContext.metronome.clearEvents();
 			GameContext.metronome.queueEvent("You have died!", Palette.RED, new Runnable() {
 				@Override
@@ -258,7 +288,12 @@ public class Player extends Creature {
 		}
 		hp = hpMax;
 		recalcStats();
-		GameContext.metronome.queueEvent("You ease your wounds.", Palette.BLUE);
+		GameContext.metronome.queueEvent("You ease your wounds.", Palette.BLUE, new Runnable() {
+			@Override
+			public void run() {
+				GameContext.audio.playSound(GameContext.audio.heal);
+			}
+		});
 	}
 	
 	public void equip(Item item) {

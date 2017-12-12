@@ -16,6 +16,9 @@ public class Map {
 	public static final byte HOARD = 6;
 	public static final byte BASIN = 7;
 	public static final byte BASIN_USED = 8;
+	public static final byte WALL_CRACKED = 9;
+	public static final byte WALL_GRATE = 10;
+	public static final byte WALL_MOSAIC = 11;
 	
 	public static final int NORTH = 0;
 	public static final int EAST = 1;
@@ -111,6 +114,7 @@ public class Map {
 		posY = Helper.iclamp(posY, 0, MAP_HEIGHT - 1);
 		
 		mapData[posY][posX] = val;
+		renderer.refreshDeco(posX, posY);
 	}
 	
 	public void resetConsumables() {
@@ -135,6 +139,12 @@ public class Map {
 		switch(c) {
 		case '#':
 			return WALL;
+		case '%':
+			return WALL_CRACKED;
+		case 'G':
+			return WALL_GRATE;
+		case '@':
+			return WALL_MOSAIC;
 		case 't':
 			return TREASURE;
 		case 'p':
@@ -155,16 +165,37 @@ public class Map {
 	
 	public static boolean isPassable(byte b) {
 		switch(b) {
+		case OPEN:
+		case STAIRS_UP:
+		case STAIRS_DOWN:
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isWall(byte b) {
+		switch(b) {
 		case WALL:
+		case WALL_CRACKED:
+		case WALL_GRATE:
+		case WALL_MOSAIC:
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isDeco(byte b) {
+		switch(b) {
 		case TREASURE:
 		case TREASURE_USED:
 		case BASIN:
 		case BASIN_USED:
+		case STAIRS_UP:
+		case STAIRS_DOWN:
 		case HOARD:
-			return false;
-		default:
 			return true;
 		}
+		return false;
 	}
 	
 	public static final int START_X = 17;
@@ -172,6 +203,197 @@ public class Map {
 	public static final int START_DIR = WEST;
 	
 	public static final Map MAP_1 = new Map(Palette.GREY, new String[] { // 14 treasures
+			"%%######@#@######%#####%",
+			"% t# t ##              #",
+			"#      @% ##### % #%## #",
+			"@  # #  # %@### %    #t#",
+			"#       #   t%# #### @##",
+			"#  #      ####         #",
+			"###% b#G##%#### #GG@%  #",
+			"#               #      #",
+			"# ## ##@### ##@ # t    #",
+			"# ##      # ##G G###%%#@",
+			"# #%%###         ^# t  #",
+			"#   %      @#@G G##    #",
+			"#  t%  %   % t# ####  #@",
+			"%%%##t %               #",
+			"#  t#  #  ###   ### #%#G",
+			"#   #%#%  #      %% Gt %",
+			"# ###     #   %   # #  @",
+			"%         #  @%#  b ## %",
+			"%  @G# %G#   t#        %",
+			"# #       #       # v  #",
+			"# @ #   # #       # %% #",
+			"# @   v   #@@%###%# #  #",
+			"%t# %   @ #%####t   %  #",
+			"####%#G##%G#@#######%##%"
+	}).addBossFight(new BossFight(16, 10, Monster.DARK_GUARDIAN, "...YoU WeRe WaRnEd...", Palette.PURPLE, new BooleanSupplier() {
+		@Override
+		public boolean getAsBoolean() {
+			return GameContext.player.gold >= Player.MAX_GOLD;
+		}
+	}).shakingText());
+	public static final Map MAP_2 = new Map(Palette.GREEN, new String[] { // 14 treasures (28)
+			"#%##GG%##%###@##@#%#####",
+			"#%   t#######%      ###%",
+			"## %###        ##%# #%%#",
+			"%       ##%%##@@%#     G",
+			"# ## @% ##      %% # t #",
+			"@  # #      ###    ###%#",
+			"#      v%@%##    @    ##",
+			"#%#@ ###    # #  %%@# %#",
+			"%### %   %t   #     @ ##",
+			"#t     b###@##%  ## # #%",
+			"## ###           G  # #%",
+			"#% #   %@#%## ## @v #  #",
+			"@  #t# #v     #%t#  @ t#",
+			"# %### #t #  #@#### #  #",
+			"#   t@ #@     #G    ##%%",
+			"###  #   #%## #@ %###G #",
+			"%#% @# #   t% ##     # #",
+			"#@# #G #   #@  %####   #",
+			"#@     #G#           # %",
+			"@  ##  @%%# @##%@#G ^#t@",
+			"# t##   ##@ttG@#     %#%",
+			"#@#%# ^ %### %##  ##G###",
+			"###@#%##%#%@      G#@@##",
+			"%%%#######%%##G@%####@#@"
+	});
+	public static final Map MAP_3 = new Map(Palette.BLUE, new String[] { // 12 treasures (40)
+			"###@G#%####%##G####%##%#",
+			"%##    t%##v   ##   %%##",
+			"#%# #######GG# %# t ####",
+			"#                      #",
+			"%G# ####%#@### %##% #G@#",
+			"%                      #",
+			"%G# ## ^ @# ####@#G#%% @",
+			"### @# #### G% t##@ t# @",
+			"%@      t##     #%@    #",
+			"###@##@##%# ####%###% ##",
+			"#                   @  #",
+			"%## ###@# ####%## ^ ## %",
+			"% # G #%^ #  v  ###### #",
+			"#   % %%  #     #      #",
+			"@ #   @%# # t%t %# %%# #",
+			"#t# # %G# #  b  #G   ###",
+			"##% # v@# %     %% %   #",
+			"%t# @     #@# #%#% G#% #",
+			"@ # #G%## ###      %@  G",
+			"#         #### ## ##@ #%",
+			"%#@ %%#####G#% ##t#    #",
+			"##               #  # t%",
+			"###  t ##G#%####   %G#%%",
+			"#%##G##%####@#%#%%%##@@%"
+	});
+	public static final Map MAP_4 = new Map(Palette.RED, new String[] { // 12 treasures (52)
+			"#########%#@%#@%%@#####%",
+			"% t####G## ^###G@##% t %",
+			"# #   ##G     #@#  #   %",
+			"# # %###  G#@ @@    # #G",
+			"# #  %@    ##         ##",
+			"#          ##@###  %@##%",
+			"#G    %%  ##    % #%  ##",
+			"#t# v#@%#G##t %    #t  #",
+			"#  G#      ##%t%## %   #",
+			"%     #G        ## #@# #",
+			"%  @###%    @#####  @# #",
+			"%t#Gv ###              @",
+			"###    %# #% ^%%#    G#%",
+			"#      ## ##G@%##@  ####",
+			"@ ##      %#@###   ##t #",
+			"@ ##%#%#%%##  ## # %#  %",
+			"#  %% ^##@#      G  ## @",
+			"@t ##          ###%  @ #",
+			"#%###G@%##G%  #%##     #",
+			"#@  ## @##%% ##t %    ##",
+			"# t  @ #     ##  %#  ###",
+			"%    % # @##%t #    %##%",
+			"##             ##G#%%##@",
+			"#G@##%##%#%#%%###@######"
+	});
+	public static final Map MAP_5 = new Map(Palette.YELLOW, new String[] { // hoards
+			"@####%###%##%##%#%###%%%",
+			"#@#####%####HHHHHHHHHHH%",
+			"##@%########HHHHHHHHHHH#",
+			"#%%#%%###%%#HHHHHHHHHHH#",
+			"##%#######@#HHHHHHHHHHH#",
+			"@%#%###%@%##HHHHHHHHHHH@",
+			"####%#G%####HHHHH HHHHH#",
+			"%@#%^      #HHHH# #HHHH@",
+			"@GG# p p p G%##%# #%@#%#",
+			"#G#%              #@#%##",
+			"%##G p p p %#p%p%p#%%###",
+			"%###^      @HHHHHHH#####",
+			"%@##%%####G#@#@@#G#%%@%G",
+			"###@G###G###%##%#%####%#",
+			"%%###@#%#%##%##G######@#",
+			"#%@######%#G%%####%#@###",
+			"####%##%%G#G@@%#@G##%%#%",
+			"##%%#%#@@###%#@#%%######",
+			"%##%#%%#@###%#G@##%##%#%",
+			"@%####@#%###%#@###%###%%",
+			"###@#%###%#G%##%%@G%#G##",
+			"###@%#%###%@#######%#%G#",
+			"##G#@###@###%##%@%######",
+			"@######%#######%#####%@#"
+	}).addBossFight(new BossFight(17, 6, Monster.GUARDIAN, "This treasure is cursed!", Palette.YELLOW, new BooleanSupplier() {
+		@Override
+		public boolean getAsBoolean() {
+			return true;
+		}
+	}));
+	// GREY, GREEN, BLUE, PURPLE, RED, YELLOW
+	
+	public static final Map[] MAPS = {
+			null,
+			MAP_1,
+			MAP_2,
+			MAP_3,
+			MAP_4,
+			MAP_5
+	};
+}
+
+class Basis {
+	public final int forwardY;
+	public final int forwardX;
+	public final int rightY;
+	public final int rightX;
+	
+	public Basis(int dir) {
+		switch(dir) {
+		case Map.NORTH:
+			forwardY = -1;
+			forwardX = 0;
+			rightY = 0;
+			rightX = 1;
+			break;
+		case Map.SOUTH:
+			forwardY = 1;
+			forwardX = 0;
+			rightY = 0;
+			rightX = -1;
+			break;
+		case Map.EAST:
+			forwardY = 0;
+			forwardX = 1;
+			rightY = 1;
+			rightX = 0;
+			break;
+		case Map.WEST:
+		default:
+			forwardY = 0;
+			forwardX = -1;
+			rightY = -1;
+			rightX = 0;
+			break;
+		}
+	}
+}
+
+/* Map data before adding special walls
+  
+   public static final Map MAP_1 = new Map(Palette.GREY, new String[] { // 14 treasures
 			"########################",
 			"# t# t ##              #",
 			"#      ## ##### # #### #",
@@ -182,7 +404,7 @@ public class Map {
 			"#               #      #",
 			"# ## ###### ### # t    #",
 			"# ##      # ### ########",
-			"# ######         ^# t  #",
+			"# ######b        ^# t  #",
 			"#   #      #### ###    #",
 			"#  t#  #   # t# ####  ##",
 			"#####t #               #",
@@ -199,7 +421,7 @@ public class Map {
 	}).addBossFight(new BossFight(16, 10, Monster.DARK_GUARDIAN, "...YoU WeRe WaRnEd...", Palette.PURPLE, new BooleanSupplier() {
 		@Override
 		public boolean getAsBoolean() {
-			return GameContext.player.gold >= Player.MAX_GOLD;
+			return GameContext.player.gold == 1;//return GameContext.player.gold >= Player.MAX_GOLD;
 		}
 	}).shakingText());
 	public static final Map MAP_2 = new Map(Palette.GREEN, new String[] { // 14 treasures (28)
@@ -311,51 +533,4 @@ public class Map {
 			return true;
 		}
 	}));
-	// GREY, GREEN, BLUE, PURPLE, RED, YELLOW
-	
-	public static final Map[] MAPS = {
-			null,
-			MAP_1,
-			MAP_2,
-			MAP_3,
-			MAP_4,
-			MAP_5
-	};
-}
-
-class Basis {
-	public final int forwardY;
-	public final int forwardX;
-	public final int rightY;
-	public final int rightX;
-	
-	public Basis(int dir) {
-		switch(dir) {
-		case Map.NORTH:
-			forwardY = -1;
-			forwardX = 0;
-			rightY = 0;
-			rightX = 1;
-			break;
-		case Map.SOUTH:
-			forwardY = 1;
-			forwardX = 0;
-			rightY = 0;
-			rightX = -1;
-			break;
-		case Map.EAST:
-			forwardY = 0;
-			forwardX = 1;
-			rightY = 1;
-			rightX = 0;
-			break;
-		case Map.WEST:
-		default:
-			forwardY = 0;
-			forwardX = -1;
-			rightY = -1;
-			rightX = 0;
-			break;
-		}
-	}
-}
+	*/

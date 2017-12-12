@@ -31,6 +31,7 @@ public class AudioManager {
 	public Sound coin;
 	public Sound dodge;
 	public Sound error;
+	public Sound heal;
 	public Sound monsterDefeated;
 	public Sound stairs;
 	
@@ -73,6 +74,7 @@ public class AudioManager {
 		coin = Gdx.audio.newSound(Gdx.files.internal("sound/Coin.wav"));
 		dodge = Gdx.audio.newSound(Gdx.files.internal("sound/Dodge.wav"));
 		error = Gdx.audio.newSound(Gdx.files.internal("sound/Error.wav"));
+		heal = Gdx.audio.newSound(Gdx.files.internal("sound/Heal.wav"));
 		monsterDefeated = Gdx.audio.newSound(Gdx.files.internal("sound/MonsterDefeated.wav"));
 		stairs = Gdx.audio.newSound(Gdx.files.internal("sound/Stairs.wav"));
 	}

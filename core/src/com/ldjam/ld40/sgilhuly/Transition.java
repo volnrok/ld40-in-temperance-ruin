@@ -14,6 +14,7 @@ public class Transition {
 	public int targetLevel;
 	public boolean goingUp;
 	public float progress = 0;
+	public boolean switched = false;
 	public Texture black;
 	
 	public Transition(int targetLevel, boolean goingUp) {
@@ -39,12 +40,17 @@ public class Transition {
 		} else {
 			batch.draw(black, 0, y - HEIGHT * 2, WIDTH, HEIGHT * 2);
 		}
-		if(progress > DURATION * 1.5) {
+		if(progress > DURATION * 1.5 && !switched) {
+			switched = true;
 			GameContext.player.posLevel = targetLevel;
 			if(targetLevel == 1 && goingUp == false) {
 				GameContext.player.posDir = Map.START_DIR;
 			}
 			GameContext.currentMap = Map.MAPS[targetLevel];
+			if(GameContext.currentMap != null) {
+				GameContext.currentMap.renderer.setPositionAndRotation(GameContext.player.posX, GameContext.player.posY, GameContext.player.posDir);
+				GameContext.currentMap.renderer.refreshDecos();
+			}
 		}
 		if(progress > DURATION * 3) {
 			GameContext.transition = null;
