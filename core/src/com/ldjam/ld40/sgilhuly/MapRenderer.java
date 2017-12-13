@@ -72,7 +72,12 @@ public class MapRenderer {
 		Texture wallCracked = Palette.loadSwapped("texture/walls/3d/bricksCracked.png", Palette.GREY, map.palette);
 		Texture wallGrate = Palette.loadSwapped("texture/walls/3d/bricksGrate.png", Palette.GREY, map.palette);
 		Texture wallMosaic = Palette.loadSwapped("texture/walls/3d/bricksMosaic.png", Palette.GREY, map.palette);
-
+		Texture wallVine = Palette.loadSwapped("texture/walls/3d/bricksVine.png", Palette.GREY, map.palette);
+		Texture wallMold = Palette.loadSwapped("texture/walls/3d/bricksMoldy.png", Palette.GREY, map.palette);
+		Texture wallWeb = Palette.loadSwapped("texture/walls/3d/bricksWebbed.png", Palette.GREY, map.palette);
+		Texture wallBloody = Palette.loadSwapped("texture/walls/3d/bricksBloody.png", Palette.GREY, map.palette);
+		Texture wallArch = Palette.loadSwapped("texture/walls/3d/bricksArch.png", Palette.GREY, map.palette);
+		
 		stairsUp = Palette.loadSwapped("texture/deco/stairsUp.png", Palette.GREY, map.palette);
 		stairsDown = Palette.loadSwapped("texture/deco/stairsDown.png", Palette.GREY, map.palette);
 		pedestal = Palette.loadSwapped("texture/deco/pedestal.png", Palette.GREY, map.palette);
@@ -80,7 +85,7 @@ public class MapRenderer {
 		basin = Palette.loadSwapped("texture/deco/basin.png", Palette.GREY, map.palette);
 		emptyBasin = Palette.loadSwapped("texture/deco/emptyBasin.png", Palette.GREY, map.palette);
 		hoard = Palette.loadSwapped("texture/deco/hoard.png", Palette.GREY, map.palette);
-				
+		
 		cam = new PerspectiveCamera(FOV, VIEW_WIDTH, VIEW_HEIGHT);
 		cam.near = 0.2f;
 		cam.far = 2.7f + OFFSET;
@@ -129,6 +134,21 @@ public class MapRenderer {
 						break;
 					case Map.WALL_MOSAIC:
 						setMaterialTexture(instance, wallMosaic);
+						break;
+					case Map.WALL_VINE:
+						setMaterialTexture(instance, wallVine);
+						break;
+					case Map.WALL_MOLD:
+						setMaterialTexture(instance, wallMold);
+						break;
+					case Map.WALL_WEB:
+						setMaterialTexture(instance, wallWeb);
+						break;
+					case Map.WALL_BLOODY:
+						setMaterialTexture(instance, wallBloody);
+						break;
+					case Map.WALL_ARCH:
+						setMaterialTexture(instance, wallArch);
 						break;
 					}
 					dungeon.add(instance);

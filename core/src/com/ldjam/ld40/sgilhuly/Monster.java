@@ -158,13 +158,13 @@ public class Monster extends Creature {
 			int totalDifficulty = 0;
 			for(Monster m : MONSTERS) {
 				if(m.difficulty <= gold) {
-					totalDifficulty += (m.difficulty + 10);
+					totalDifficulty += (m.difficulty + 15);
 				}
 			}
 			float selectedDifficulty = (float) (Math.random() * totalDifficulty);
 			for(Monster m : MONSTERS) {
 				if(m.difficulty <= gold) {
-					selectedDifficulty -= (m.difficulty + 10);
+					selectedDifficulty -= (m.difficulty + 15);
 					if(selectedDifficulty <= 0) {
 						return m;
 					}

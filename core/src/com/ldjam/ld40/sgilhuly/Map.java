@@ -19,6 +19,11 @@ public class Map {
 	public static final byte WALL_CRACKED = 9;
 	public static final byte WALL_GRATE = 10;
 	public static final byte WALL_MOSAIC = 11;
+	public static final byte WALL_VINE = 12;
+	public static final byte WALL_MOLD = 13;
+	public static final byte WALL_WEB = 14;
+	public static final byte WALL_BLOODY = 15;
+	public static final byte WALL_ARCH = 16;
 	
 	public static final int NORTH = 0;
 	public static final int EAST = 1;
@@ -145,6 +150,16 @@ public class Map {
 			return WALL_GRATE;
 		case '@':
 			return WALL_MOSAIC;
+		case 'V':
+			return WALL_VINE;
+		case 'M':
+			return WALL_MOLD;
+		case 'W':
+			return WALL_WEB;
+		case 'B':
+			return WALL_BLOODY;
+		case 'A':
+			return WALL_ARCH;
 		case 't':
 			return TREASURE;
 		case 'p':
@@ -168,6 +183,7 @@ public class Map {
 		case OPEN:
 		case STAIRS_UP:
 		case STAIRS_DOWN:
+		case WALL_ARCH:
 			return true;
 		}
 		return false;
@@ -179,6 +195,11 @@ public class Map {
 		case WALL_CRACKED:
 		case WALL_GRATE:
 		case WALL_MOSAIC:
+		case WALL_VINE:
+		case WALL_MOLD:
+		case WALL_WEB:
+		case WALL_BLOODY:
+		case WALL_ARCH:
 			return true;
 		}
 		return false;
@@ -203,30 +224,30 @@ public class Map {
 	public static final int START_DIR = WEST;
 	
 	public static final Map MAP_1 = new Map(Palette.GREY, new String[] { // 14 treasures
-			"%%######@#@######%#####%",
-			"% t# t ##              #",
-			"#      @% ##### % #%## #",
-			"@  # #  # %@### %    #t#",
-			"#       #   t%# #### @##",
+			"#%########@####VVVVVV###",
+			"% t# t ##         A    #",
+			"#      @% ###VV V VVVV #",
+			"@  M #  # %@### V    Vt#",
+			"#       M   t%# #### @##",
 			"#  #      ####         #",
-			"###% b#G##%#### #GG@%  #",
-			"#               #      #",
-			"# ## ##@### ##@ # t    #",
-			"# ##      # ##G G###%%#@",
-			"# #%%###         ^# t  #",
-			"#   %      @#@G G##    #",
-			"#  t%  %   % t# ####  #@",
-			"%%%##t %               #",
-			"#  t#  #  ###   ### #%#G",
-			"#   #%#%  #      %% Gt %",
-			"# ###     #   %   # #  @",
-			"%         #  @%#  b ## %",
-			"%  @G# %G#   t#        %",
-			"# #       #       # v  #",
-			"# @ #   # #       # %% #",
+			"#M#M bMG##%#### #GG@%  #",
+			"M               #      #",
+			"M MM MM@#M# ##@ # t    #",
+			"M MG      # ##G G###%%#@",
+			"M MMGMMM         ^# t  #",
+			"M   M      M#@G G##    #",
+			"#  tM  M   % t# ####  #@",
+			"#%%##t %               #",
+			"#  t#  V  V##   ### W%WG",
+			"#   #%#V  #      %W Gt W",
+			"#A###     #   %   # W  W",
+			"%         #  @##  b #W %",
+			"%  @GV VG#   t#        W",
+			"# #       #       W v  W",
+			"# @ V   V #       # %% #",
 			"# @   v   #@@%###%# #  #",
-			"%t# %   @ #%####t   %  #",
-			"####%#G##%G#@#######%##%"
+			"%t# V   V ######t   %  #",
+			"#####VVV################"
 	}).addBossFight(new BossFight(16, 10, Monster.DARK_GUARDIAN, "...YoU WeRe WaRnEd...", Palette.PURPLE, new BooleanSupplier() {
 		@Override
 		public boolean getAsBoolean() {
@@ -234,82 +255,82 @@ public class Map {
 		}
 	}).shakingText());
 	public static final Map MAP_2 = new Map(Palette.GREEN, new String[] { // 14 treasures (28)
-			"#%##GG%##%###@##@#%#####",
-			"#%   t#######%      ###%",
-			"## %###        ##%# #%%#",
-			"%       ##%%##@@%#     G",
-			"# ## @% ##      %% # t #",
-			"@  # #      ###    ###%#",
+			"####GG##########@#%#####",
+			"#%   t#######%      ####",
+			"## %##M        WW%# #%%#",
+			"%       M#%%#WWW##     G",
+			"# ## MM ##      %% # t #",
+			"@  # M      ###    ###%#",
 			"#      v%@%##    @    ##",
 			"#%#@ ###    # #  %%@# %#",
-			"%### %   %t   #     @ ##",
-			"#t     b###@##%  ## # #%",
-			"## ###           G  # #%",
-			"#% #   %@#%## ## @v #  #",
-			"@  #t# #v     #%t#  @ t#",
-			"# %### #t #  #@#### #  #",
-			"#   t@ #@     #G    ##%%",
-			"###  #   #%## #@ %###G #",
-			"%#% @# #   t% ##     # #",
-			"#@# #G #   #@  %####   #",
-			"#@     #G#           # %",
-			"@  ##  @%%# @##%@#G ^#t@",
-			"# t##   ##@ttG@#     %#%",
-			"#@#%# ^ %### %##  ##G###",
-			"###@#%##%#%@      G#@@##",
-			"%%%#######%%##G@%####@#@"
+			"###M %   %t   #  A  @ ##",
+			"#t     b###@##G  V# # ##",
+			"## B##           G  # ##",
+			"#% #   %V#%@# VV @v #  #",
+			"@  #t# #v     G#t#  @ t#",
+			"# %### #t V  V##### #  #",
+			"#   t@ #@     #G    ##B#",
+			"###  #   #%VV #@ %###BAB",
+			"##% @B #   t% ##   A # #",
+			"### ## #   ##  MM###   #",
+			"#@     #G#        A  M %",
+			"@  ##AA@%%# @##%MMG ^Mt@",
+			"# t##   ##@ttG##     %##",
+			"#@### ^ %### %MM  MMG###",
+			"#####%#####@      G#####",
+			"##############G@%#######"
 	});
 	public static final Map MAP_3 = new Map(Palette.BLUE, new String[] { // 12 treasures (40)
 			"###@G#%####%##G####%##%#",
-			"%##    t%##v   ##   %%##",
-			"#%# #######GG# %# t ####",
+			"%##    t%##v   B#   %%##",
+			"#%# #######GGB %# t ####",
 			"#                      #",
-			"%G# ####%#@### %##% #G@#",
-			"%                      #",
-			"%G# ## ^ @# ####@#G#%% @",
-			"### @# #### G% t##@ t# @",
-			"%@      t##     #%@    #",
-			"###@##@##%# ####%###% ##",
+			"%G# W###%MMM#W %##% #VV#",
+			"%                      V",
+			"%G# #M ^ @# WW##@#G#VV @",
+			"### @# MM## G% t##@ tV @",
+			"%@      t#M     #%@    #",
+			"##MMMMMM#MW ##MMM###% ##",
 			"#                   @  #",
-			"%## ###@# ####%## ^ ## %",
-			"% # G #%^ #  v  ###### #",
-			"#   % %%  #     #      #",
-			"@ #   @%# # t%t %# %%# #",
-			"#t# # %G# #  b  #G   ###",
-			"##% # v@# %     %% %   #",
-			"%t# @     #@# #%#% G#% #",
+			"%MM ###@M @@@@@@@ ^ M# %",
+			"M # G #M^ @  v  @MMM## #",
+			"#   % %M  @     @      #",
+			"@ #   @%M @ t@t @# %%# #",
+			"#tM # BG# @  b  @V   ###",
+			"#MM # v@B @     @V V   #",
+			"%tM B     @@@A@@@% VVV #",
 			"@ # #G%## ###      %@  G",
 			"#         #### ## ##@ #%",
-			"%#@ %%#####G#% ##t#    #",
-			"##               #  # t%",
-			"###  t ##G#%####   %G#%%",
-			"#%##G##%####@#%#%%%##@@%"
+			"%#M %%#MMM#G#% #VtV    #",
+			"#M               #  # t%",
+			"##M  t ##G#%##VV   %G#%%",
+			"#%##G##%####@#%#VV%##@@%"
 	});
 	public static final Map MAP_4 = new Map(Palette.RED, new String[] { // 12 treasures (52)
-			"#########%#@%#@%%@#####%",
-			"% t####G## ^###G@##% t %",
-			"# #   ##G     #@#  #   %",
-			"# # %###  G#@ @@    # #G",
-			"# #  %@    ##         ##",
-			"#          ##@###  %@##%",
-			"#G    %%  ##    % #%  ##",
+			"###########@###########%",
+			"% t####### ^#######% t %",
+			"# #   ##W     M#M  M   %",
+			"# W W##W  GW@ @M    M MG",
+			"# W  W@    ##         M#",
+			"#          ##@##M  MM##%",
+			"#W    %W  ##    % M%  ##",
 			"#t# v#@%#G##t %    #t  #",
-			"#  G#      ##%t%## %   #",
+			"#  G#  A   ##%t%## %   #",
 			"%     #G        ## #@# #",
 			"%  @###%    @#####  @# #",
-			"%t#Gv ###              @",
-			"###    %# #% ^%%#    G#%",
-			"#      ## ##G@%##@  ####",
-			"@ ##      %#@###   ##t #",
-			"@ ##%#%#%%##  ## # %#  %",
-			"#  %% ^##@#      G  ## @",
+			"%t#Wv W#W              @",
+			"##W    WW W% ^%%#    G#%",
+			"#      W# ##G@%##@  ####",
+			"@ #W      W#@###   ##t #",
+			"@ ##W#%WW%##  #V # %#  %",
+			"#  %% ^##@V      G  ## @",
 			"@t ##          ###%  @ #",
-			"#%###G@%##G%  #%##     #",
-			"#@  ## @##%% ##t %    ##",
-			"# t  @ #     ##  %#  ###",
-			"%    % # @##%t #    %##%",
-			"##             ##G#%%##@",
-			"#G@##%##%#%#%%###@######"
+			"#%###G@%VVG%  #%##     #",
+			"#@  ## @#VV% ##t %    ##",
+			"# t  @ V     ##  %#  ###",
+			"%    %A# @##%t #    %###",
+			"##   A A       ##G#%####",
+			"##@##%##%#%#%%##########"
 	});
 	public static final Map MAP_5 = new Map(Palette.YELLOW, new String[] { // hoards
 			"@####%###%##%##%#%###%%%",
@@ -319,7 +340,7 @@ public class Map {
 			"##%#######@#HHHHHHHHHHH#",
 			"@%#%###%@%##HHHHHHHHHHH@",
 			"####%#G%####HHHHH HHHHH#",
-			"%@#%^      #HHHH# #HHHH@",
+			"%@#%^      #HHHH#A#HHHH@",
 			"@GG# p p p G%##%# #%@#%#",
 			"#G#%              #@#%##",
 			"%##G p p p %#p%p%p#%%###",

@@ -1,5 +1,6 @@
 package com.ldjam.ld40.sgilhuly;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -61,11 +62,13 @@ public class Palette {
 	};
 	
 	public static Texture loadSwapped(String file, int from, int to) {
-		Texture tex = new Texture(file);
-		Texture tex2 = paletteSwap(tex, from, to);
-		if(from != to) {
-			tex.dispose();
+		Texture tex = new Texture(Gdx.files.internal(file));
+		if(from == to) {
+			return tex;
 		}
+		
+		Texture tex2 = paletteSwap(tex, from, to);
+		tex.dispose();
 		return tex2;
 	}
 	
