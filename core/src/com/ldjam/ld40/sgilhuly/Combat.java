@@ -106,8 +106,7 @@ public class Combat {
 		}
 		// Initiative check - 3% per perception
 		if(Math.random() < player.perCalc / 33.3f) {
-			metronome.queueEvent("Free attack!", Palette.BLUE);
-			swing(player, monster);
+			swing(player, monster, true);
 		}
 		
 		if(monster.sound != null) {
@@ -116,14 +115,22 @@ public class Combat {
 	}
 	
 	public void swing(Creature a, final Creature b) {
+		swing(a, b, false);
+	}
+	
+	public void swing(Creature a, final Creature b, boolean isFreeSwing) {
 		int numSwings = a.numSwings(b);
-		metronome.queueEvent(a.swingText() + (numSwings == 1 ? "!" : " " + numSwings + " times!"), Palette.GREY);
+		if(isFreeSwing) {
+			metronome.queueEvent(numSwings == 1 ? "Free strike!" : numSwings + " free strikes!", Palette.BLUE);
+		} else {
+			metronome.queueEvent(a.swingText() + (numSwings == 1 ? "!" : " " + numSwings + " times!"), Palette.GREY);
+		}
 		
 		for(int i = 0; i < numSwings; i++) {
 			if(a.didHit(b)) {
 				float damage = a.swingDamage();
 				final int totalDamage = (int) b.resistDamage(damage, PHYS);
-				metronome.queueEvent(String.format("Hit for %d! <%d>", totalDamage, (int) damage), Palette.GREY, new Runnable() {
+				metronome.queueEvent(String.format(isFreeSwing ? "" : "Hit for %d! <%d>", totalDamage, (int) damage), Palette.GREY, new Runnable() {
 					@Override
 					public void run() {
 						b.takeDamage(totalDamage);
@@ -131,7 +138,7 @@ public class Combat {
 					}
 				});
 			} else {
-				metronome.queueEvent("Miss!", Palette.PURPLE, new Runnable() {
+				metronome.queueEvent(isFreeSwing ? "" : "Miss!", Palette.PURPLE, new Runnable() {
 					@Override
 					public void run() {
 						GameContext.audio.playSound(GameContext.audio.dodge);
